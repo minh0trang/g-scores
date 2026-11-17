@@ -19,7 +19,7 @@ export default function SubjectScoreTable({ subjectScores, summary }) {
               key={item.code}
               className="hover:bg-slate-50/80 transition-colors"
             >
-              <td className="py-2 px-4 text-center font-mono text-xs text-[var(--text-muted)]">
+              <td className="py-2 px-4 text-center text-xs text-[var(--text-muted)]">
                 {index + 1}
               </td>
               <td className="py-2 px-4 font-medium text-[var(--text-primary)]">
@@ -27,7 +27,7 @@ export default function SubjectScoreTable({ subjectScores, summary }) {
               </td>
               <td className="py-2 px-4 text-right">
                 <span
-                  className="font-mono text-base font-bold"
+                  className="text-base font-bold"
                   style={{ color: item.tier.colorVar }}
                 >
                   {item.tier.displayScore}
@@ -47,7 +47,7 @@ export default function SubjectScoreTable({ subjectScores, summary }) {
               </td>
               <td className="py-2 px-4 text-right">
                 <span
-                  className="font-mono text-base font-bold"
+                  className="text-base font-bold"
                   style={{ color: averageTier.colorVar }}
                 >
                   {summary.averageScore}

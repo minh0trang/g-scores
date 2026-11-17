@@ -31,7 +31,7 @@ export default function BlockScoreTable({ blockScores }) {
               </td>
               <td className="py-2 px-4 text-right">
                 <span
-                  className="font-mono text-base font-bold"
+                  className="text-base font-bold"
                   style={{ color: block.tier.colorVar }}
                 >
                   {block.totalScore}

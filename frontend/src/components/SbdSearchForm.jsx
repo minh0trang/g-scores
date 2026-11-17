@@ -47,7 +47,7 @@ export default function SbdSearchForm({
               value={sbdInput}
               onChange={(e) => onSbdChange(e.target.value)}
               placeholder="Nhập Số báo danh (VD: 01000001)"
-              className="w-full pl-9 pr-9 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] font-mono text-sm text-[var(--text-primary)] placeholder:font-sans placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-shadow"
+              className="w-full pl-9 pr-9 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-sm font-medium text-[var(--text-primary)] placeholder:font-normal placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-shadow"
             />
             {sbdInput && (
               <button
@@ -116,7 +116,7 @@ export default function SbdSearchForm({
                     : 'bg-slate-50 border-[var(--border-default)] text-[var(--text-primary)] hover:bg-slate-100'
                 }`}
               >
-                <span className="font-mono">{sample.sbd}</span>
+                <span>{sample.sbd}</span>
               </button>
             )
           })}

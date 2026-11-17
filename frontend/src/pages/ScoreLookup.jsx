@@ -75,7 +75,7 @@ export default function ScoreLookup() {
                   strokeWidth={2}
                 />
                 <span>SBD:</span>
-                <span className="font-mono font-bold text-[var(--accent-primary)]">
+                <span className="font-bold text-[var(--accent-primary)]">
                   {summary.sbd}
                 </span>
               </span>

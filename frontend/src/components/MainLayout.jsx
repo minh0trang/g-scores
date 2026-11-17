@@ -39,9 +39,9 @@ export default function MainLayout() {
   const closeSidebar = () => setSidebarOpen(false)
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg-base)] text-[var(--text-primary)]">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col bg-[var(--bg-base)] text-[var(--text-primary)]">
       {/* Top Fixed Brand Header */}
-      <header className="sticky top-0 z-30 h-16 bg-[var(--bg-brand)] text-white shadow-md">
+      <header className="sticky top-0 z-30 h-16 shrink-0 bg-[var(--bg-brand)] text-white shadow-md">
         <div className="h-full px-4 md:px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -79,7 +79,7 @@ export default function MainLayout() {
         </div>
       </header>
 
-      <div className="flex-1 flex relative">
+      <div className="flex-1 flex relative min-h-0">
         {/* Mobile Slide-Over Backdrop */}
         {sidebarOpen && (
           <div
@@ -157,7 +157,7 @@ export default function MainLayout() {
                   <span className="h-2.5 w-2.5 rounded-xs bg-[var(--state-success)]"></span>
                   Giỏi
                 </span>
-                <span className="font-mono text-[var(--text-muted)]">
+                <span className="font-medium text-[var(--text-muted)]">
                   &gt;= 8.0
                 </span>
               </div>
@@ -166,7 +166,7 @@ export default function MainLayout() {
                   <span className="h-2.5 w-2.5 rounded-xs bg-[var(--state-good)]"></span>
                   Khá
                 </span>
-                <span className="font-mono text-[var(--text-muted)]">
+                <span className="font-medium text-[var(--text-muted)]">
                   6.0 – &lt;8.0
                 </span>
               </div>
@@ -175,7 +175,7 @@ export default function MainLayout() {
                   <span className="h-2.5 w-2.5 rounded-xs bg-[var(--state-warning)]"></span>
                   Trung bình
                 </span>
-                <span className="font-mono text-[var(--text-muted)]">
+                <span className="font-medium text-[var(--text-muted)]">
                   4.0 – &lt;6.0
                 </span>
               </div>
@@ -184,7 +184,7 @@ export default function MainLayout() {
                   <span className="h-2.5 w-2.5 rounded-xs bg-[var(--state-error)]"></span>
                   Yếu / Kém
                 </span>
-                <span className="font-mono text-[var(--text-muted)]">
+                <span className="font-medium text-[var(--text-muted)]">
                   &lt; 4.0
                 </span>
               </div>
@@ -192,9 +192,9 @@ export default function MainLayout() {
           </div>
         </aside>
 
-        {/* Scrollable Main Content Area */}
-        <main className="flex-1 min-w-0">
-          <div className="max-w-7xl mx-auto p-4 md:p-6">
+        {/* Main Content Area */}
+        <main className="flex-1 min-w-0 min-h-0 flex flex-col overflow-y-auto">
+          <div className="w-full max-w-7xl mx-auto p-4 md:p-5 flex-1 flex flex-col min-h-0">
             <Outlet />
           </div>
         </main>
