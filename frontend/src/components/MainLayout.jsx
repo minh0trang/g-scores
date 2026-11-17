@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import {
-  BarChart3,
   GraduationCap,
   LayoutDashboard,
   Menu,
   Search,
+  Trophy,
   X,
 } from 'lucide-react'
 
@@ -13,22 +13,19 @@ const NAV_ITEMS = [
   {
     to: '/',
     label: 'Tổng quan',
-    description: 'Thống kê & Bảng điều khiển',
     icon: LayoutDashboard,
     end: true,
   },
   {
     to: '/search',
     label: 'Tra cứu điểm',
-    description: 'Tìm kiếm theo Số báo danh',
     icon: Search,
     end: false,
   },
   {
     to: '/reports',
-    label: 'Báo cáo & Xếp hạng',
-    description: 'Phổ điểm & Top 10 Khối A',
-    icon: BarChart3,
+    label: 'Xếp hạng Khối A',
+    icon: Trophy,
     end: false,
   },
 ]
@@ -126,69 +123,13 @@ export default function MainLayout() {
                           }`}
                           strokeWidth={2}
                         />
-                        <div className="leading-tight">
-                          <div>{item.label}</div>
-                          <div
-                            className={`text-xs font-normal mt-0.5 ${
-                              isActive
-                                ? 'text-blue-200'
-                                : 'text-[var(--text-muted)]'
-                            }`}
-                          >
-                            {item.description}
-                          </div>
-                        </div>
+                        <span>{item.label}</span>
                       </>
                     )}
                   </NavLink>
                 )
               })}
             </nav>
-          </div>
-
-          {/* Score Tier Legend Reference Card in Sidebar */}
-          <div className="p-4 border-t border-[var(--border-default)] bg-slate-50/60">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2.5">
-              Phân loại mức điểm
-            </p>
-            <div className="space-y-1.5 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-[var(--text-primary)]">
-                  <span className="h-2.5 w-2.5 rounded-xs bg-[var(--state-success)]"></span>
-                  Giỏi
-                </span>
-                <span className="font-medium text-[var(--text-muted)]">
-                  &gt;= 8.0
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-[var(--text-primary)]">
-                  <span className="h-2.5 w-2.5 rounded-xs bg-[var(--state-good)]"></span>
-                  Khá
-                </span>
-                <span className="font-medium text-[var(--text-muted)]">
-                  6.0 – &lt;8.0
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-[var(--text-primary)]">
-                  <span className="h-2.5 w-2.5 rounded-xs bg-[var(--state-warning)]"></span>
-                  Trung bình
-                </span>
-                <span className="font-medium text-[var(--text-muted)]">
-                  4.0 – &lt;6.0
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-[var(--text-primary)]">
-                  <span className="h-2.5 w-2.5 rounded-xs bg-[var(--state-error)]"></span>
-                  Yếu / Kém
-                </span>
-                <span className="font-medium text-[var(--text-muted)]">
-                  &lt; 4.0
-                </span>
-              </div>
-            </div>
           </div>
         </aside>
 

@@ -1,42 +1,44 @@
-import { BarChart3, Trophy } from 'lucide-react'
+import { AlertCircle, Loader2 } from 'lucide-react'
+import GroupALeaderboardTable from '../components/GroupALeaderboardTable'
+import TopThreeGroupACards from '../components/TopThreeGroupACards'
+import { useReportData } from '../hooks/useReportData'
 
 export default function Leaderboard() {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-          Báo cáo & Bảng xếp hạng
-        </h1>
-        <p className="text-sm text-[var(--text-muted)] mt-1">
-          Thống kê chi tiết số lượng thí sinh theo 4 mức điểm ở từng môn và danh sách Top 10 thí sinh Khối A.
+  const { top10GroupA, loading, error } = useReportData()
+
+  if (loading) {
+    return (
+      <div className="py-16 flex flex-col items-center justify-center text-center">
+        <Loader2
+          className="h-8 w-8 text-[var(--accent-primary)] animate-spin mb-2.5"
+          strokeWidth={2}
+        />
+        <p className="text-sm font-medium text-[var(--text-primary)]">
+          Đang tải bảng xếp hạng Top 10 Khối A...
         </p>
       </div>
+    )
+  }
 
-      {/* Score Statistics Chart Placeholder */}
-      <section className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 shadow-2xs">
-        <div className="flex items-center gap-2.5 mb-3">
-          <BarChart3 className="h-5 w-5 text-[var(--accent-primary)]" strokeWidth={2} />
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-            Thống kê phổ điểm theo môn (4 mức điểm)
-          </h2>
-        </div>
-        <p className="text-sm text-[var(--text-muted)]">
-          Biểu đồ cột trực quan (Recharts) sẽ được tích hợp ở Unit 4.
-        </p>
-      </section>
+  if (error) {
+    return (
+      <div
+        role="alert"
+        className="flex items-center gap-2.5 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm"
+      >
+        <AlertCircle
+          className="h-5 w-5 text-[var(--state-error)] shrink-0"
+          strokeWidth={2}
+        />
+        <span>{error}</span>
+      </div>
+    )
+  }
 
-      {/* Group A Leaderboard Placeholder */}
-      <section className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 shadow-2xs">
-        <div className="flex items-center gap-2.5 mb-3">
-          <Trophy className="h-5 w-5 text-[var(--accent-gold)]" strokeWidth={2} />
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-            Top 10 thí sinh Khối A (Toán, Vật lí, Hóa học)
-          </h2>
-        </div>
-        <p className="text-sm text-[var(--text-muted)]">
-          Bảng xếp hạng 10 thí sinh điểm cao nhất Khối A sẽ được tích hợp ở Unit 4.
-        </p>
-      </section>
+  return (
+    <div className="flex-1 flex flex-col gap-3.5 min-h-0">
+      <TopThreeGroupACards topCandidates={top10GroupA} />
+      <GroupALeaderboardTable topCandidates={top10GroupA} />
     </div>
   )
 }

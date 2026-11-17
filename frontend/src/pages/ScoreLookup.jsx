@@ -42,7 +42,7 @@ export default function ScoreLookup() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex-1 flex flex-col gap-3.5 min-h-0">
       <SbdSearchForm
         sbdInput={sbdInput}
         onSbdChange={setSbdInput}
@@ -55,7 +55,7 @@ export default function ScoreLookup() {
         activeSbd={summary?.sbd}
       />
 
-      <section className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs">
+      <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
             <FileText
@@ -94,7 +94,7 @@ export default function ScoreLookup() {
         </div>
 
         {loading && (
-          <div className="py-8 flex flex-col items-center justify-center text-center">
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
             <Loader2
               className="h-7 w-7 text-[var(--accent-primary)] animate-spin mb-2"
               strokeWidth={2}
@@ -106,7 +106,7 @@ export default function ScoreLookup() {
         )}
 
         {!loading && !summary && (
-          <div className="py-8 px-4 border border-dashed border-[var(--border-default)] rounded-xl bg-slate-50/50 text-center">
+          <div className="flex-1 flex flex-col items-center justify-center px-4 border border-dashed border-[var(--border-default)] rounded-xl bg-slate-50/50 text-center">
             <Search
               className="h-7 w-7 text-[var(--text-muted)] mx-auto mb-2 opacity-75"
               strokeWidth={2}
@@ -118,7 +118,7 @@ export default function ScoreLookup() {
         )}
 
         {!loading && summary && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+          <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
             <SubjectScoreTable
               subjectScores={subjectScores}
               summary={summary}

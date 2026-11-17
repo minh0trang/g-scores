@@ -236,7 +236,6 @@ export const MOCK_SCORE_DISTRIBUTION = [
 
 export const MOCK_TOP_10_GROUP_A = [
   {
-    rank: 1,
     sbd: '01000001',
     toan: 9.8,
     vatLi: 10.0,
@@ -245,16 +244,14 @@ export const MOCK_TOP_10_GROUP_A = [
     languageCode: 'N1',
   },
   {
-    rank: 2,
     sbd: '26014821',
-    toan: 9.8,
-    vatLi: 9.75,
+    toan: 9.6,
+    vatLi: 10.0,
     hoaHoc: 10.0,
-    totalScore: 29.55,
+    totalScore: 29.6,
     languageCode: 'N1',
   },
   {
-    rank: 3,
     sbd: '19008342',
     toan: 9.8,
     vatLi: 10.0,
@@ -263,16 +260,14 @@ export const MOCK_TOP_10_GROUP_A = [
     languageCode: 'N1',
   },
   {
-    rank: 4,
     sbd: '01029415',
-    toan: 9.6,
-    vatLi: 10.0,
-    hoaHoc: 9.75,
-    totalScore: 29.35,
+    toan: 9.8,
+    vatLi: 9.75,
+    hoaHoc: 10.0,
+    totalScore: 29.55,
     languageCode: 'N1',
   },
   {
-    rank: 5,
     sbd: '28011904',
     toan: 9.6,
     vatLi: 9.75,
@@ -281,7 +276,6 @@ export const MOCK_TOP_10_GROUP_A = [
     languageCode: 'N1',
   },
   {
-    rank: 6,
     sbd: '37006129',
     toan: 9.8,
     vatLi: 9.5,
@@ -290,7 +284,6 @@ export const MOCK_TOP_10_GROUP_A = [
     languageCode: 'N1',
   },
   {
-    rank: 7,
     sbd: '02001542',
     toan: 9.6,
     vatLi: 9.75,
@@ -299,7 +292,6 @@ export const MOCK_TOP_10_GROUP_A = [
     languageCode: null,
   },
   {
-    rank: 8,
     sbd: '15009281',
     toan: 9.6,
     vatLi: 9.5,
@@ -308,7 +300,6 @@ export const MOCK_TOP_10_GROUP_A = [
     languageCode: 'N1',
   },
   {
-    rank: 9,
     sbd: '38014502',
     toan: 9.4,
     vatLi: 9.75,
@@ -317,7 +308,6 @@ export const MOCK_TOP_10_GROUP_A = [
     languageCode: 'N1',
   },
   {
-    rank: 10,
     sbd: '40007813',
     toan: 9.4,
     vatLi: 9.5,
@@ -326,4 +316,69 @@ export const MOCK_TOP_10_GROUP_A = [
     languageCode: 'N6',
   },
 ]
+
+/**
+ * Xếp hạng chuẩn cho danh sách Top Khối A:
+ * Các thí sinh có cùng tổng điểm (totalScore) sẽ nhận cùng thứ hạng (Đồng Thủ khoa, Đồng Á khoa, Đồng hạng).
+ */
+export function computeGroupARanking(candidates = []) {
+  const scoreGroupsMap = new Map()
+
+  candidates.forEach((candidate) => {
+    const scoreKey = Number(candidate.totalScore).toFixed(2)
+    if (!scoreGroupsMap.has(scoreKey)) {
+      scoreGroupsMap.set(scoreKey, [])
+    }
+    scoreGroupsMap.get(scoreKey).push(candidate)
+  })
+
+  const scoreGroups = Array.from(scoreGroupsMap.entries()).map(
+    ([scoreKey, groupCandidates], groupIndex) => {
+      const rank = groupIndex + 1
+      const isTied = groupCandidates.length > 1
+
+      let roleLabel = `Hạng ${rank}`
+      if (rank === 1) {
+        roleLabel = isTied
+          ? `Đồng Thủ khoa (${groupCandidates.length} thí sinh)`
+          : 'Thủ khoa Khối A'
+      } else if (rank === 2) {
+        roleLabel = isTied
+          ? `Đồng Á khoa (${groupCandidates.length} thí sinh)`
+          : 'Á khoa Khối A'
+      } else if (rank === 3) {
+        roleLabel = isTied
+          ? `Đồng Hạng 3 (${groupCandidates.length} thí sinh)`
+          : 'Hạng 3 Khối A'
+      } else if (isTied) {
+        roleLabel = `Đồng hạng ${rank}`
+      }
+
+      return {
+        rank,
+        scoreKey,
+        isTied,
+        roleLabel,
+        candidates: groupCandidates,
+      }
+    },
+  )
+
+  const rankedCandidates = []
+  scoreGroups.forEach((group) => {
+    group.candidates.forEach((candidate) => {
+      rankedCandidates.push({
+        ...candidate,
+        rank: group.rank,
+        isTied: group.isTied,
+        roleLabel: group.roleLabel,
+      })
+    })
+  })
+
+  return {
+    rankedCandidates,
+    topThreeGroups: scoreGroups.slice(0, 3),
+  }
+}
 
