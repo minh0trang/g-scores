@@ -6,7 +6,7 @@ import {
   MOCK_TOP_10_GROUP_A,
 } from './mockData'
 
-const USE_MOCK_BY_DEFAULT = import.meta.env.VITE_USE_MOCK_API !== 'false'
+const USE_MOCK_BY_DEFAULT = import.meta.env.VITE_USE_MOCK_API === 'true'
 const MOCK_DELAY_MS = 250
 
 function simulateDelay(ms = MOCK_DELAY_MS) {
