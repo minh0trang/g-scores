@@ -7,6 +7,7 @@ import {
   LANGUAGE_CODE_LABELS,
   SUBJECTS,
   classifyScoreTier,
+  formatSubjectDisplayName,
 } from '../services/mockData'
 
 const D_BLOCK_BY_LANGUAGE = {
@@ -155,23 +156,26 @@ export function useScoreLookup(initialSbd = '') {
     setHasSearched(false)
   }, [])
 
-  // Chỉ lấy các môn thí sinh có điểm dự thi (bỏ qua các môn không thi)
+  // Hiển thị các môn có điểm dự thi + môn Ngoại ngữ (nếu không có language_code thì hiển thị 'Ngoại ngữ' và điểm '—')
   const subjectScores = useMemo(() => {
     if (!studentData) return []
 
     const rawScores = studentData.scores || {}
+    const languageCode = studentData.languageCode
 
-    return SUBJECTS.filter(
-      (subject) =>
+    return SUBJECTS.filter((subject) => {
+      const hasScore =
         rawScores[subject.code] !== null &&
         rawScores[subject.code] !== undefined &&
-        rawScores[subject.code] !== '',
-    ).map((subject) => {
-      const rawValue = rawScores[subject.code]
+        rawScores[subject.code] !== ''
+      return hasScore || subject.code === 'NGOAI_NGU'
+    }).map((subject) => {
+      const rawValue = rawScores[subject.code] ?? null
       const tier = classifyScoreTier(rawValue)
 
       return {
         ...subject,
+        name: formatSubjectDisplayName(subject, languageCode),
         score: rawValue,
         tier,
       }
@@ -212,11 +216,12 @@ export function useScoreLookup(initialSbd = '') {
   const summary = useMemo(() => {
     if (!studentData) return null
 
-    const totalTaken = subjectScores.length
+    const takenSubjects = subjectScores.filter((item) => item.score !== null)
+    const totalTaken = takenSubjects.length
     const averageScore =
       totalTaken > 0
         ? (
-            subjectScores.reduce((acc, cur) => acc + Number(cur.score), 0) /
+            takenSubjects.reduce((acc, cur) => acc + Number(cur.score), 0) /
             totalTaken
           ).toFixed(2)
         : '—'

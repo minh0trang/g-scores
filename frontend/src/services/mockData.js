@@ -11,13 +11,21 @@ export const SUBJECTS = [
 ]
 
 export const LANGUAGE_CODE_LABELS = {
-  N1: 'N1 — Tiếng Anh',
-  N2: 'N2 — Tiếng Nga',
-  N3: 'N3 — Tiếng Pháp',
-  N4: 'N4 — Tiếng Trung',
-  N5: 'N5 — Tiếng Đức',
-  N6: 'N6 — Tiếng Nhật',
-  N7: 'N7 — Tiếng Hàn',
+  N1: 'N1 - Tiếng Anh',
+  N2: 'N2 - Tiếng Nga',
+  N3: 'N3 - Tiếng Pháp',
+  N4: 'N4 - Tiếng Trung',
+  N5: 'N5 - Tiếng Đức',
+  N6: 'N6 - Tiếng Nhật',
+  N7: 'N7 - Tiếng Hàn',
+}
+
+export function formatSubjectDisplayName(subject, languageCode) {
+  if (subject.code === 'NGOAI_NGU' && languageCode) {
+    const langLabel = LANGUAGE_CODE_LABELS[languageCode] || languageCode
+    return `${subject.name} (${langLabel})`
+  }
+  return subject.name
 }
 
 /**
