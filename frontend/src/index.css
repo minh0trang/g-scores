@@ -13,12 +13,12 @@
   --state-good: #3B82F6;
   --state-warning: #F59E0B;
   --state-error: #EF4444;
-  --font-sans: 'Rubik', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
 @theme {
-  --font-sans: 'Rubik', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
