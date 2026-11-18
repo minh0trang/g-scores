@@ -1,5 +1,3 @@
-import { Layers } from 'lucide-react'
-
 export default function BlockScoreTable({ blockScores, provinceName }) {
   const bestBlock =
     blockScores && blockScores.length > 0
@@ -51,13 +49,7 @@ export default function BlockScoreTable({ blockScores, provinceName }) {
                   className="hover:bg-slate-50/80 transition-colors border-b border-[var(--border-default)] last:border-b-0"
                 >
                   <td className="py-2.5 px-3 text-center font-semibold text-[var(--text-primary)]">
-                    <span className="inline-flex items-center justify-center gap-1">
-                      <Layers
-                        className="h-3.5 w-3.5 text-[var(--accent-primary)]"
-                        strokeWidth={2}
-                      />
-                      <span>{block.code}</span>
-                    </span>
+                    {block.code}
                   </td>
 
                   <td className="py-2.5 px-3 text-center text-xs text-[var(--text-muted)]">
