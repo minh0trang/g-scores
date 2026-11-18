@@ -37,7 +37,7 @@ export default function ScoreLookup() {
   }
 
   return (
-    <div className="flex-1 flex flex-col gap-3.5 min-h-0">
+    <div className="flex-1 flex flex-col gap-2.5 sm:gap-3.5 min-h-0">
       <SbdSearchForm
         sbdInput={sbdInput}
         onSbdChange={setSbdInput}
@@ -49,13 +49,13 @@ export default function ScoreLookup() {
         summary={summary}
       />
 
-      <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs">
-        <div className="flex items-center gap-2 mb-3">
+      <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-3 sm:p-4 md:p-5 shadow-2xs">
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-2.5 sm:mb-3">
           <FileText
-            className="h-5 w-5 text-[var(--accent-primary)]"
+            className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-[var(--accent-primary)] shrink-0"
             strokeWidth={2}
           />
-          <h2 className="text-base font-semibold text-[var(--text-primary)]">
+          <h2 className="text-sm sm:text-base font-semibold text-[var(--text-primary)]">
             Bảng điểm chi tiết
           </h2>
         </div>

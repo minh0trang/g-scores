@@ -38,14 +38,14 @@ export default function MainLayout() {
   return (
     <div className="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col bg-[var(--bg-base)] text-[var(--text-primary)]">
       {/* Top Fixed Brand Header */}
-      <header className="sticky top-0 z-30 h-16 shrink-0 bg-[var(--bg-brand)] text-white shadow-md">
-        <div className="h-full px-4 md:px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-30 h-14 sm:h-16 shrink-0 bg-[var(--bg-brand)] text-white shadow-md">
+        <div className="h-full px-3.5 sm:px-4 md:px-6 flex items-center justify-between">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               type="button"
               onClick={() => setSidebarOpen((prev) => !prev)}
               aria-label="Mở hoặc đóng thanh điều hướng"
-              className="lg:hidden p-2 rounded-lg text-white/90 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="lg:hidden p-1.5 sm:p-2 rounded-lg text-white/90 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
             >
               {sidebarOpen ? (
                 <X className="h-5 w-5" strokeWidth={2} />
@@ -54,15 +54,15 @@ export default function MainLayout() {
               )}
             </button>
 
-            <div className="flex items-center gap-2.5">
-              <div className="h-9 w-9 rounded-lg bg-[var(--accent-gold)] text-slate-950 flex items-center justify-center shadow-sm">
-                <GraduationCap className="h-5 w-5" strokeWidth={2} />
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-[var(--accent-gold)] text-slate-950 flex items-center justify-center shadow-sm">
+                <GraduationCap className="h-4.5 w-4.5 sm:h-5 sm:w-5" strokeWidth={2} />
               </div>
               <div>
-                <span className="text-lg font-bold tracking-tight block leading-none">
+                <span className="text-base sm:text-lg font-bold tracking-tight block leading-none">
                   G-Scores
                 </span>
-                <span className="text-xs text-blue-200 block mt-0.5">
+                <span className="text-[11px] sm:text-xs text-blue-200 block mt-0.5">
                   Tra cứu & Phân tích Điểm thi THPT 2024
                 </span>
               </div>
@@ -130,7 +130,7 @@ export default function MainLayout() {
 
         {/* Main Content Area */}
         <main className="flex-1 min-w-0 min-h-0 flex flex-col overflow-y-auto">
-          <div className="w-full max-w-7xl mx-auto p-4 md:p-5 flex-1 flex flex-col min-h-0">
+          <div className="w-full max-w-7xl mx-auto p-2.5 sm:p-4 md:p-5 flex-1 flex flex-col min-h-0">
             <Outlet />
           </div>
         </main>

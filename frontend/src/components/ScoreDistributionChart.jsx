@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import {
   Bar,
   BarChart,
@@ -10,6 +11,27 @@ import {
   YAxis,
 } from 'recharts'
 import { BarChart3 } from 'lucide-react'
+
+function useIsTouchOrMobile() {
+  const [isTouchOrMobile, setIsTouchOrMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => {
+      const isTouch =
+        typeof window !== 'undefined' &&
+        window.matchMedia &&
+        window.matchMedia('(hover: none) and (pointer: coarse)').matches
+      const isMobileWidth =
+        typeof window !== 'undefined' && window.innerWidth < 768
+      setIsTouchOrMobile(Boolean(isTouch || isMobileWidth))
+    }
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  return isTouchOrMobile
+}
 
 const TIER_SERIES = [
   {
@@ -46,6 +68,7 @@ export default function ScoreDistributionChart({
   selectedSubjectCode,
   selectedSubjectData,
 }) {
+  const isTouchOrMobile = useIsTouchOrMobile()
   const isSingleSubject = selectedSubjectCode !== 'ALL' && selectedSubjectData
 
   const singleSubjectBars = isSingleSubject
@@ -73,26 +96,32 @@ export default function ScoreDistributionChart({
       ]
     : []
 
+  const chartMargin = isTouchOrMobile
+    ? { top: 8, right: 8, left: -16, bottom: 4 }
+    : { top: 8, right: 16, left: 4, bottom: 4 }
+
+  const tickFontSize = isTouchOrMobile ? 10 : 12
+
   return (
-    <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs overflow-hidden">
-      <div className="flex items-center gap-2 mb-4">
+    <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-3 sm:p-4 md:p-5 shadow-2xs overflow-hidden">
+      <div className="flex items-center gap-2 mb-3 sm:mb-4">
         <BarChart3
-          className="h-5 w-5 text-[var(--accent-primary)]"
+          className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-[var(--accent-primary)] shrink-0"
           strokeWidth={2}
         />
-        <h2 className="text-base font-semibold text-[var(--text-primary)]">
+        <h2 className="text-sm sm:text-base font-semibold text-[var(--text-primary)]">
           {isSingleSubject
             ? `Biểu đồ phổ điểm môn ${selectedSubjectData.subjectName}`
             : 'Biểu đồ phổ điểm 4 mức theo môn học'}
         </h2>
       </div>
 
-      <div className="flex-1 min-h-[260px] w-full relative overflow-hidden">
+      <div className="flex-1 min-h-[220px] sm:min-h-[260px] w-full relative overflow-hidden">
         <ResponsiveContainer width="100%" height="100%">
           {isSingleSubject ? (
             <BarChart
               data={singleSubjectBars}
-              margin={{ top: 8, right: 16, left: 4, bottom: 4 }}
+              margin={chartMargin}
             >
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -101,37 +130,40 @@ export default function ScoreDistributionChart({
               />
               <XAxis
                 dataKey="tierName"
-                tick={{ fill: 'var(--text-primary)', fontSize: 12 }}
+                tick={{ fill: 'var(--text-primary)', fontSize: tickFontSize }}
                 axisLine={{ stroke: 'var(--border-default)' }}
                 tickLine={false}
               />
               <YAxis
                 tickFormatter={formatCompactNumber}
-                tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
+                tick={{ fill: 'var(--text-muted)', fontSize: tickFontSize }}
                 axisLine={false}
                 tickLine={false}
               />
-              <Tooltip
-                isAnimationActive={false}
-                wrapperStyle={{ pointerEvents: 'none', zIndex: 50 }}
-                formatter={(value) => [
-                  `${Number(value).toLocaleString('vi-VN')} thí sinh`,
-                  'Số lượng',
-                ]}
-                contentStyle={{
-                  backgroundColor: 'var(--bg-surface)',
-                  borderColor: 'var(--border-default)',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.8125rem',
-                  boxShadow:
-                    '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-                }}
-              />
+              {!isTouchOrMobile && (
+                <Tooltip
+                  isAnimationActive={false}
+                  wrapperStyle={{ pointerEvents: 'none', zIndex: 50 }}
+                  formatter={(value) => [
+                    `${Number(value).toLocaleString('vi-VN')} thí sinh`,
+                    'Số lượng',
+                  ]}
+                  contentStyle={{
+                    backgroundColor: 'var(--bg-surface)',
+                    borderColor: 'var(--border-default)',
+                    borderRadius: '0.5rem',
+                    fontSize: '0.8125rem',
+                    boxShadow:
+                      '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                  }}
+                />
+              )}
               <Bar
                 dataKey="count"
                 radius={[6, 6, 0, 0]}
                 maxBarSize={68}
                 isAnimationActive={false}
+                activeBar={isTouchOrMobile ? false : undefined}
               >
                 {singleSubjectBars.map((entry) => (
                   <Cell key={entry.tierName} fill={entry.color} />
@@ -141,7 +173,7 @@ export default function ScoreDistributionChart({
           ) : (
             <BarChart
               data={distribution}
-              margin={{ top: 8, right: 16, left: 4, bottom: 4 }}
+              margin={chartMargin}
             >
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -150,34 +182,39 @@ export default function ScoreDistributionChart({
               />
               <XAxis
                 dataKey="subjectName"
-                tick={{ fill: 'var(--text-primary)', fontSize: 12 }}
+                tick={{ fill: 'var(--text-primary)', fontSize: tickFontSize }}
                 axisLine={{ stroke: 'var(--border-default)' }}
                 tickLine={false}
               />
               <YAxis
                 tickFormatter={formatCompactNumber}
-                tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
+                tick={{ fill: 'var(--text-muted)', fontSize: tickFontSize }}
                 axisLine={false}
                 tickLine={false}
               />
-              <Tooltip
-                isAnimationActive={false}
-                wrapperStyle={{ pointerEvents: 'none', zIndex: 50 }}
-                formatter={(value, name) => [
-                  `${Number(value).toLocaleString('vi-VN')} thí sinh`,
-                  name,
-                ]}
-                contentStyle={{
-                  backgroundColor: 'var(--bg-surface)',
-                  borderColor: 'var(--border-default)',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.8125rem',
-                  boxShadow:
-                    '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-                }}
-              />
+              {!isTouchOrMobile && (
+                <Tooltip
+                  isAnimationActive={false}
+                  wrapperStyle={{ pointerEvents: 'none', zIndex: 50 }}
+                  formatter={(value, name) => [
+                    `${Number(value).toLocaleString('vi-VN')} thí sinh`,
+                    name,
+                  ]}
+                  contentStyle={{
+                    backgroundColor: 'var(--bg-surface)',
+                    borderColor: 'var(--border-default)',
+                    borderRadius: '0.5rem',
+                    fontSize: '0.8125rem',
+                    boxShadow:
+                      '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                  }}
+                />
+              )}
               <Legend
-                wrapperStyle={{ fontSize: '0.75rem', paddingTop: '8px' }}
+                wrapperStyle={{
+                  fontSize: isTouchOrMobile ? '0.6875rem' : '0.75rem',
+                  paddingTop: '6px',
+                }}
               />
               {TIER_SERIES.map((series) => (
                 <Bar
@@ -187,6 +224,7 @@ export default function ScoreDistributionChart({
                   fill={series.color}
                   radius={[4, 4, 0, 0]}
                   isAnimationActive={false}
+                  activeBar={isTouchOrMobile ? false : undefined}
                 />
               ))}
             </BarChart>

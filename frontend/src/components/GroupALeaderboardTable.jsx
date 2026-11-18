@@ -37,28 +37,28 @@ function renderRankBadge(rank) {
 
 function getRowClass(rank) {
   if (rank === 1) {
-    return 'bg-amber-50/40 hover:bg-amber-50/70 border-b border-amber-100 transition-colors'
+    return 'bg-amber-50/40 md:hover:bg-amber-50/70 border-b border-amber-100 transition-colors'
   }
   if (rank === 2) {
-    return 'bg-slate-50/60 hover:bg-slate-100/70 border-b border-slate-200 transition-colors'
+    return 'bg-slate-50/60 md:hover:bg-slate-100/70 border-b border-slate-200 transition-colors'
   }
   if (rank === 3) {
-    return 'bg-orange-50/30 hover:bg-orange-50/60 border-b border-orange-100 transition-colors'
+    return 'bg-orange-50/30 md:hover:bg-orange-50/60 border-b border-orange-100 transition-colors'
   }
-  return 'hover:bg-slate-50/80 border-b border-[var(--border-default)] transition-colors'
+  return 'md:hover:bg-slate-50/80 border-b border-[var(--border-default)] transition-colors'
 }
 
 function getSbdClass(rank) {
   if (rank === 1) {
-    return 'inline-flex items-center justify-center gap-1.5 font-bold text-amber-950 hover:text-amber-800 hover:underline'
+    return 'inline-flex items-center justify-center gap-1 sm:gap-1.5 font-bold text-amber-950 md:hover:text-amber-800 hover:underline'
   }
   if (rank === 2) {
-    return 'inline-flex items-center justify-center gap-1.5 font-bold text-slate-900 hover:text-slate-700 hover:underline'
+    return 'inline-flex items-center justify-center gap-1 sm:gap-1.5 font-bold text-slate-900 md:hover:text-slate-700 hover:underline'
   }
   if (rank === 3) {
-    return 'inline-flex items-center justify-center gap-1.5 font-bold text-orange-950 hover:text-orange-800 hover:underline'
+    return 'inline-flex items-center justify-center gap-1 sm:gap-1.5 font-bold text-orange-950 md:hover:text-orange-800 hover:underline'
   }
-  return 'inline-flex items-center justify-center gap-1.5 font-semibold text-[var(--accent-primary)] hover:underline'
+  return 'inline-flex items-center justify-center gap-1 sm:gap-1.5 font-semibold text-[var(--accent-primary)] hover:underline'
 }
 
 function renderSubjectScore(score) {
@@ -66,7 +66,7 @@ function renderSubjectScore(score) {
   const formatted = num.toFixed(2)
   if (num >= 10) {
     return (
-      <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 font-extrabold border border-emerald-300 text-xs shadow-2xs">
+      <span className="inline-block px-1 sm:px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 font-extrabold border border-emerald-300 text-[11px] sm:text-xs shadow-2xs">
         {formatted}
       </span>
     )
@@ -81,27 +81,27 @@ function renderTotalScore(rank, totalScore) {
   const formatted = (Number(totalScore) || 0).toFixed(2)
   if (rank === 1) {
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-black bg-amber-100 text-amber-900 border border-amber-400 shadow-2xs">
+      <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-black bg-amber-100 text-amber-900 border border-amber-400 shadow-2xs">
         {formatted}
       </span>
     )
   }
   if (rank === 2) {
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs">
+      <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs">
         {formatted}
       </span>
     )
   }
   if (rank === 3) {
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-bold bg-orange-100 text-orange-900 border border-orange-300 shadow-2xs">
+      <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-orange-100 text-orange-900 border border-orange-300 shadow-2xs">
         {formatted}
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+    <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-md text-xs sm:text-sm font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
       {formatted}
     </span>
   )
@@ -116,14 +116,14 @@ export default function GroupALeaderboardTable({
   const { rankedCandidates } = computeGroupARanking(topCandidates)
 
   return (
-    <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-        <div className="flex items-center gap-2">
+    <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-3 sm:p-4 md:p-5 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 mb-2.5 sm:mb-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <Trophy
-            className="h-5 w-5 text-[var(--accent-gold)] shrink-0"
+            className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-[var(--accent-gold)] shrink-0"
             strokeWidth={2}
           />
-          <h2 className="text-sm md:text-base font-semibold text-[var(--text-primary)]">
+          <h2 className="text-xs sm:text-sm md:text-base font-semibold text-[var(--text-primary)]">
             Bảng xếp hạng Top 10 thí sinh Khối A00 (Toán – Vật lí – Hóa học)
           </h2>
         </div>
@@ -138,56 +138,56 @@ export default function GroupALeaderboardTable({
       </div>
 
       <div className="flex-1 min-h-0 overflow-auto rounded-lg border border-[var(--border-default)]">
-        <table className="w-full text-center border-collapse text-sm">
+        <table className="w-full text-center border-collapse text-xs sm:text-sm">
           <thead>
-            <tr className="bg-slate-50 border-b border-[var(--border-default)] text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-              <th className="py-2.5 px-3 w-20 text-center">Hạng</th>
-              <th className="py-2.5 px-3 text-center">Số báo danh</th>
-              <th className="py-2.5 px-3 text-center">Địa phương</th>
-              <th className="py-2.5 px-3 text-center">Toán</th>
-              <th className="py-2.5 px-3 text-center">Vật lí</th>
-              <th className="py-2.5 px-3 text-center">Hóa học</th>
-              <th className="py-2.5 px-3 text-center">Tổng điểm Khối A</th>
+            <tr className="bg-slate-50 border-b border-[var(--border-default)] text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 w-16 sm:w-20 text-center">Hạng</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">Số báo danh</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">Địa phương</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">Toán</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">Vật lí</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">Hóa học</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">Tổng điểm Khối A</th>
             </tr>
           </thead>
           <tbody>
             {rankedCandidates.map((item) => {
               return (
                 <tr key={item.sbd} className={getRowClass(item.rank)}>
-                  <td className="py-2 px-3 text-center">
+                  <td className="py-1.5 px-1.5 sm:py-2 sm:px-3 text-center">
                     {renderRankBadge(item.rank)}
                   </td>
 
-                  <td className="py-2 px-3 text-center">
+                  <td className="py-1.5 px-1.5 sm:py-2 sm:px-3 text-center">
                     <Link
                       to={`/search?sbd=${item.sbd}`}
                       className={getSbdClass(item.rank)}
                     >
                       <span>{item.sbd}</span>
                       <ExternalLink
-                        className="h-3.5 w-3.5 opacity-70"
+                        className="h-3 sm:h-3.5 w-3 sm:w-3.5 opacity-70"
                         strokeWidth={2}
                       />
                     </Link>
                   </td>
 
-                  <td className="py-2 px-3 text-center text-xs font-medium text-[var(--text-primary)]">
+                  <td className="py-1.5 px-1.5 sm:py-2 sm:px-3 text-center text-[11px] sm:text-xs font-medium text-[var(--text-primary)]">
                     {item.provinceName || '—'}
                   </td>
 
-                  <td className="py-2 px-3 text-center">
+                  <td className="py-1.5 px-1.5 sm:py-2 sm:px-3 text-center">
                     {renderSubjectScore(item.toan)}
                   </td>
 
-                  <td className="py-2 px-3 text-center">
+                  <td className="py-1.5 px-1.5 sm:py-2 sm:px-3 text-center">
                     {renderSubjectScore(item.vatLi)}
                   </td>
 
-                  <td className="py-2 px-3 text-center">
+                  <td className="py-1.5 px-1.5 sm:py-2 sm:px-3 text-center">
                     {renderSubjectScore(item.hoaHoc)}
                   </td>
 
-                  <td className="py-2 px-3 text-center">
+                  <td className="py-1.5 px-1.5 sm:py-2 sm:px-3 text-center">
                     {renderTotalScore(item.rank, item.totalScore)}
                   </td>
                 </tr>

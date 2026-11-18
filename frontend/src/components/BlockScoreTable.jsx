@@ -13,14 +13,14 @@ export default function BlockScoreTable({ blockScores, provinceName }) {
   return (
     <div className="h-full flex flex-col justify-between overflow-hidden rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)]">
       <div className="overflow-x-auto">
-        <table className="w-full text-center border-collapse text-sm">
+        <table className="w-full text-center border-collapse text-xs sm:text-sm">
           <thead>
-            <tr className="bg-slate-50 border-b border-[var(--border-default)] text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-              <th className="py-2.5 px-3 w-20 text-center">Khối</th>
-              <th className="py-2.5 px-3 text-center">Tổ hợp môn</th>
-              <th className="py-2.5 px-3 text-center">Tổng điểm</th>
-              <th className="py-2.5 px-3 text-center">Hạng toàn quốc</th>
-              <th className="py-2.5 px-3 text-center">{localHeaderTitle}</th>
+            <tr className="bg-slate-50 border-b border-[var(--border-default)] text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 w-16 sm:w-20 text-center">Khối</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">Tổ hợp môn</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">Tổng điểm</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">Hạng toàn quốc</th>
+              <th className="py-2 px-1.5 sm:py-2.5 sm:px-3 text-center">{localHeaderTitle}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-default)]">
@@ -46,45 +46,45 @@ export default function BlockScoreTable({ blockScores, provinceName }) {
               return (
                 <tr
                   key={block.code}
-                  className="hover:bg-slate-50/80 transition-colors border-b border-[var(--border-default)] last:border-b-0"
+                  className="md:hover:bg-slate-50/80 transition-colors border-b border-[var(--border-default)] last:border-b-0"
                 >
-                  <td className="py-2.5 px-3 text-center font-semibold text-[var(--text-primary)]">
+                  <td className="py-1.5 px-1.5 sm:py-2.5 sm:px-3 text-center font-semibold text-[var(--text-primary)]">
                     {block.code}
                   </td>
 
-                  <td className="py-2.5 px-3 text-center text-xs text-[var(--text-muted)]">
+                  <td className="py-1.5 px-1.5 sm:py-2.5 sm:px-3 text-center text-[11px] sm:text-xs text-[var(--text-muted)]">
                     {block.subjectLabel || block.name}
                   </td>
 
-                  <td className="py-2.5 px-3 text-center">
+                  <td className="py-1.5 px-1.5 sm:py-2.5 sm:px-3 text-center">
                     <span
-                      className="text-base font-bold"
+                      className="text-sm sm:text-base font-bold"
                       style={{ color: block.tier.colorVar }}
                     >
                       {block.totalScore}
                     </span>
                   </td>
 
-                  <td className="py-2.5 px-3 text-center">
+                  <td className="py-1.5 px-1.5 sm:py-2.5 sm:px-3 text-center">
                     <div className="inline-flex flex-col items-center">
-                      <span className="font-semibold text-[var(--text-primary)]">
+                      <span className="font-semibold text-xs sm:text-sm text-[var(--text-primary)]">
                         {natRankFormatted}
                       </span>
                       {natTotalFormatted && (
-                        <span className="text-[11px] text-[var(--text-muted)]">
+                        <span className="text-[10px] sm:text-[11px] text-[var(--text-muted)]">
                           / {natTotalFormatted}
                         </span>
                       )}
                     </div>
                   </td>
 
-                  <td className="py-2.5 px-3 text-center">
+                  <td className="py-1.5 px-1.5 sm:py-2.5 sm:px-3 text-center">
                     <div className="inline-flex flex-col items-center">
-                      <span className="font-semibold text-[var(--accent-primary)]">
+                      <span className="font-semibold text-xs sm:text-sm text-[var(--accent-primary)]">
                         {provRankFormatted}
                       </span>
                       {provTotalFormatted && (
-                        <span className="text-[11px] text-[var(--text-muted)]">
+                        <span className="text-[10px] sm:text-[11px] text-[var(--text-muted)]">
                           / {provTotalFormatted}
                         </span>
                       )}
@@ -98,13 +98,13 @@ export default function BlockScoreTable({ blockScores, provinceName }) {
       </div>
 
       {bestBlock && (
-        <div className="mt-auto bg-slate-50 border-t border-[var(--border-default)] py-2.5 px-4 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="mt-auto bg-slate-50 border-t border-[var(--border-default)] py-2 px-3 sm:py-2.5 sm:px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
           <span className="font-semibold uppercase tracking-wider text-[var(--text-muted)]">
             Khối điểm cao nhất ({bestBlock.code})
           </span>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <span
-              className="text-base font-bold"
+              className="text-sm sm:text-base font-bold"
               style={{ color: bestBlock.tier.colorVar }}
             >
               {bestBlock.totalScore}

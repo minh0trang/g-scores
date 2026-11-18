@@ -33,7 +33,7 @@ export default function SubjectTierSummary({ stats }) {
     (stats?.low || 0)
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
       {TIER_META.map((tier) => {
         const count = stats?.[tier.key] || 0
         const percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0'
@@ -41,14 +41,14 @@ export default function SubjectTierSummary({ stats }) {
         return (
           <div
             key={tier.key}
-            className={`rounded-xl border p-3.5 bg-[var(--bg-surface)] border-[var(--border-default)] shadow-2xs`}
+            className="rounded-xl border p-2.5 sm:p-3.5 bg-[var(--bg-surface)] border-[var(--border-default)] shadow-2xs"
           >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-medium text-[var(--text-muted)]">
+            <div className="flex items-center justify-between gap-1.5">
+              <span className="text-[11px] sm:text-xs font-medium text-[var(--text-muted)] truncate">
                 {tier.label}
               </span>
               <span
-                className="text-xs font-semibold px-2 py-0.5 rounded-md border"
+                className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-md border shrink-0"
                 style={{
                   color: tier.colorVar,
                   borderColor: 'var(--border-default)',
@@ -59,12 +59,12 @@ export default function SubjectTierSummary({ stats }) {
             </div>
 
             <p
-              className="text-xl font-bold mt-1.5"
+              className="text-lg sm:text-xl font-bold mt-1 sm:mt-1.5"
               style={{ color: tier.colorVar }}
             >
               {count.toLocaleString('vi-VN')}
             </p>
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">
+            <p className="text-[10px] sm:text-xs text-[var(--text-muted)] mt-0.5">
               lượt bài thi
             </p>
           </div>

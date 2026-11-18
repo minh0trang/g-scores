@@ -24,6 +24,7 @@
 @layer base {
   html {
     scrollbar-gutter: stable;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
@@ -34,5 +35,16 @@
     margin: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
