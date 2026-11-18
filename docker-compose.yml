@@ -16,7 +16,58 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - gscores-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gscores-backend
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-gscores}?reWriteBatchedInserts=true
+      DB_USERNAME: ${DB_USERNAME:-gscores}
+      DB_PASSWORD: ${DB_PASSWORD:-gscores}
+      CSV_FILE_PATH: /app/dataset/diem_thi_thpt_2024.csv
+      CORS_ALLOWED_ORIGINS: http://localhost,http://localhost:80,http://localhost:5173
+      IMPORTER_ENABLED: "true"
+      IMPORTER_BATCH_SIZE: 5000
+    volumes:
+      - ./dataset:/app/dataset:ro
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/api/v1/provinces || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+    networks:
+      - gscores-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api/v1
+    container_name: gscores-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - gscores-network
 
 volumes:
   postgres_data:
 
+networks:
+  gscores-network:
+    driver: bridge
