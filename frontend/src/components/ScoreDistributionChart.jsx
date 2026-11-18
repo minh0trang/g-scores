@@ -74,7 +74,7 @@ export default function ScoreDistributionChart({
     : []
 
   return (
-    <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs">
+    <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs overflow-hidden">
       <div className="flex items-center gap-2 mb-4">
         <BarChart3
           className="h-5 w-5 text-[var(--accent-primary)]"
@@ -87,7 +87,7 @@ export default function ScoreDistributionChart({
         </h2>
       </div>
 
-      <div className="flex-1 min-h-[260px] w-full">
+      <div className="flex-1 min-h-[260px] w-full relative overflow-hidden">
         <ResponsiveContainer width="100%" height="100%">
           {isSingleSubject ? (
             <BarChart
@@ -112,6 +112,8 @@ export default function ScoreDistributionChart({
                 tickLine={false}
               />
               <Tooltip
+                isAnimationActive={false}
+                wrapperStyle={{ pointerEvents: 'none', zIndex: 50 }}
                 formatter={(value) => [
                   `${Number(value).toLocaleString('vi-VN')} thí sinh`,
                   'Số lượng',
@@ -121,9 +123,16 @@ export default function ScoreDistributionChart({
                   borderColor: 'var(--border-default)',
                   borderRadius: '0.5rem',
                   fontSize: '0.8125rem',
+                  boxShadow:
+                    '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
                 }}
               />
-              <Bar dataKey="count" radius={[6, 6, 0, 0]} maxBarSize={68}>
+              <Bar
+                dataKey="count"
+                radius={[6, 6, 0, 0]}
+                maxBarSize={68}
+                isAnimationActive={false}
+              >
                 {singleSubjectBars.map((entry) => (
                   <Cell key={entry.tierName} fill={entry.color} />
                 ))}
@@ -152,6 +161,8 @@ export default function ScoreDistributionChart({
                 tickLine={false}
               />
               <Tooltip
+                isAnimationActive={false}
+                wrapperStyle={{ pointerEvents: 'none', zIndex: 50 }}
                 formatter={(value, name) => [
                   `${Number(value).toLocaleString('vi-VN')} thí sinh`,
                   name,
@@ -161,6 +172,8 @@ export default function ScoreDistributionChart({
                   borderColor: 'var(--border-default)',
                   borderRadius: '0.5rem',
                   fontSize: '0.8125rem',
+                  boxShadow:
+                    '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
                 }}
               />
               <Legend
@@ -173,6 +186,7 @@ export default function ScoreDistributionChart({
                   name={series.name}
                   fill={series.color}
                   radius={[4, 4, 0, 0]}
+                  isAnimationActive={false}
                 />
               ))}
             </BarChart>
