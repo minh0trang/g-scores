@@ -1,19 +1,110 @@
 import { Link } from 'react-router-dom'
-import { ExternalLink, Trophy } from 'lucide-react'
+import { Award, Crown, ExternalLink, Medal, Trophy } from 'lucide-react'
 import ProvinceSelector from './ProvinceSelector'
-import { classifyScoreTier, computeGroupARanking } from '../services/mockData'
+import { computeGroupARanking } from '../services/mockData'
 
-function getRankBadgeClass(rank) {
+function renderRankBadge(rank) {
   if (rank === 1) {
-    return 'bg-amber-100 text-amber-800 border-amber-300 font-bold'
+    return (
+      <span className="inline-flex items-center justify-center gap-1 h-6 px-2 rounded-md text-xs font-black bg-amber-400 text-amber-950 border border-amber-500 shadow-2xs">
+        <Crown className="h-3 w-3 fill-amber-950 text-amber-950" />
+        <span>1</span>
+      </span>
+    )
   }
   if (rank === 2) {
-    return 'bg-slate-100 text-slate-700 border-slate-300 font-bold'
+    return (
+      <span className="inline-flex items-center justify-center gap-1 h-6 px-2 rounded-md text-xs font-bold bg-slate-200 text-slate-800 border border-slate-300 shadow-2xs">
+        <Medal className="h-3 w-3 text-slate-600" />
+        <span>2</span>
+      </span>
+    )
   }
   if (rank === 3) {
-    return 'bg-orange-100 text-orange-800 border-orange-300 font-bold'
+    return (
+      <span className="inline-flex items-center justify-center gap-1 h-6 px-2 rounded-md text-xs font-bold bg-orange-100 text-orange-900 border border-orange-300 shadow-2xs">
+        <Award className="h-3 w-3 text-orange-700" />
+        <span>3</span>
+      </span>
+    )
   }
-  return 'bg-slate-50 text-[var(--text-muted)] border-[var(--border-default)] font-medium'
+  return (
+    <span className="inline-flex items-center justify-center h-6 w-6 rounded-md text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+      {rank}
+    </span>
+  )
+}
+
+function getRowClass(rank) {
+  if (rank === 1) {
+    return 'bg-amber-50/40 hover:bg-amber-50/70 border-b border-amber-100 transition-colors'
+  }
+  if (rank === 2) {
+    return 'bg-slate-50/60 hover:bg-slate-100/70 border-b border-slate-200 transition-colors'
+  }
+  if (rank === 3) {
+    return 'bg-orange-50/30 hover:bg-orange-50/60 border-b border-orange-100 transition-colors'
+  }
+  return 'hover:bg-slate-50/80 border-b border-[var(--border-default)] transition-colors'
+}
+
+function getSbdClass(rank) {
+  if (rank === 1) {
+    return 'inline-flex items-center justify-center gap-1.5 font-bold text-amber-950 hover:text-amber-800 hover:underline'
+  }
+  if (rank === 2) {
+    return 'inline-flex items-center justify-center gap-1.5 font-bold text-slate-900 hover:text-slate-700 hover:underline'
+  }
+  if (rank === 3) {
+    return 'inline-flex items-center justify-center gap-1.5 font-bold text-orange-950 hover:text-orange-800 hover:underline'
+  }
+  return 'inline-flex items-center justify-center gap-1.5 font-semibold text-[var(--accent-primary)] hover:underline'
+}
+
+function renderSubjectScore(score) {
+  const num = Number(score) || 0
+  const formatted = num.toFixed(2)
+  if (num >= 10) {
+    return (
+      <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 font-extrabold border border-emerald-300 text-xs shadow-2xs">
+        {formatted}
+      </span>
+    )
+  }
+  if (num >= 9.5) {
+    return <span className="font-bold text-slate-800">{formatted}</span>
+  }
+  return <span className="font-medium text-slate-600">{formatted}</span>
+}
+
+function renderTotalScore(rank, totalScore) {
+  const formatted = (Number(totalScore) || 0).toFixed(2)
+  if (rank === 1) {
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-black bg-amber-100 text-amber-900 border border-amber-400 shadow-2xs">
+        {formatted}
+      </span>
+    )
+  }
+  if (rank === 2) {
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs">
+        {formatted}
+      </span>
+    )
+  }
+  if (rank === 3) {
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-bold bg-orange-100 text-orange-900 border border-orange-300 shadow-2xs">
+        {formatted}
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+      {formatted}
+    </span>
+  )
 }
 
 export default function GroupALeaderboardTable({
@@ -59,32 +150,18 @@ export default function GroupALeaderboardTable({
               <th className="py-2.5 px-3 text-center">Tổng điểm Khối A</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[var(--border-default)]">
+          <tbody>
             {rankedCandidates.map((item) => {
-              const toanTier = classifyScoreTier(item.toan)
-              const vatLiTier = classifyScoreTier(item.vatLi)
-              const hoaHocTier = classifyScoreTier(item.hoaHoc)
-              const totalTier = classifyScoreTier(item.totalScore / 3)
-
               return (
-                <tr
-                  key={item.sbd}
-                  className="hover:bg-slate-50/80 transition-colors"
-                >
+                <tr key={item.sbd} className={getRowClass(item.rank)}>
                   <td className="py-2 px-3 text-center">
-                    <span
-                      className={`inline-flex items-center justify-center h-6 w-7 rounded-md text-xs border ${getRankBadgeClass(
-                        item.rank,
-                      )}`}
-                    >
-                      {item.rank}
-                    </span>
+                    {renderRankBadge(item.rank)}
                   </td>
 
-                  <td className="py-2 px-3 text-center font-semibold">
+                  <td className="py-2 px-3 text-center">
                     <Link
                       to={`/search?sbd=${item.sbd}`}
-                      className="inline-flex items-center justify-center gap-1.5 text-[var(--accent-primary)] hover:underline"
+                      className={getSbdClass(item.rank)}
                     >
                       <span>{item.sbd}</span>
                       <ExternalLink
@@ -99,39 +176,19 @@ export default function GroupALeaderboardTable({
                   </td>
 
                   <td className="py-2 px-3 text-center">
-                    <span
-                      className="font-bold"
-                      style={{ color: toanTier.colorVar }}
-                    >
-                      {toanTier.displayScore}
-                    </span>
+                    {renderSubjectScore(item.toan)}
                   </td>
 
                   <td className="py-2 px-3 text-center">
-                    <span
-                      className="font-bold"
-                      style={{ color: vatLiTier.colorVar }}
-                    >
-                      {vatLiTier.displayScore}
-                    </span>
+                    {renderSubjectScore(item.vatLi)}
                   </td>
 
                   <td className="py-2 px-3 text-center">
-                    <span
-                      className="font-bold"
-                      style={{ color: hoaHocTier.colorVar }}
-                    >
-                      {hoaHocTier.displayScore}
-                    </span>
+                    {renderSubjectScore(item.hoaHoc)}
                   </td>
 
                   <td className="py-2 px-3 text-center">
-                    <span
-                      className="text-base font-bold"
-                      style={{ color: totalTier.colorVar }}
-                    >
-                      {Number(item.totalScore).toFixed(2)}
-                    </span>
+                    {renderTotalScore(item.rank, item.totalScore)}
                   </td>
                 </tr>
               )
