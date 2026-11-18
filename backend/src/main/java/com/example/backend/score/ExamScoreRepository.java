@@ -5,11 +5,16 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ExamScoreRepository extends JpaRepository<ExamScore, Long> {
 
     @Query("SELECT es FROM ExamScore es JOIN FETCH es.subject WHERE es.student.id = :studentId")
     List<ExamScore> findByStudentIdWithSubject(@Param("studentId") Long studentId);
+
+    @Query("SELECT COUNT(es) FROM ExamScore es WHERE es.student.provinceCode = :provinceCode")
+    long countByProvinceCode(@Param("provinceCode") String provinceCode);
 
     @Query(
             value = """
@@ -27,24 +32,45 @@ public interface ExamScoreRepository extends JpaRepository<ExamScore, Long> {
 
     @Query(
             value = """
-                    SELECT st.sbd AS sbd,
-                           st.language_code AS languageCode,
-                           es_toan.score AS toan,
-                           es_li.score AS vatLi,
-                           es_hoa.score AS hoaHoc,
-                           (es_toan.score + es_li.score + es_hoa.score) AS totalScore
-                    FROM students st
-                    JOIN exam_scores es_toan ON es_toan.student_id = st.id AND es_toan.score >= 8.00
-                    JOIN subjects s_toan ON s_toan.id = es_toan.subject_id AND s_toan.code = 'TOAN'
-                    JOIN exam_scores es_li ON es_li.student_id = st.id AND es_li.score >= 8.00
-                    JOIN subjects s_li ON s_li.id = es_li.subject_id AND s_li.code = 'VAT_LI'
-                    JOIN exam_scores es_hoa ON es_hoa.student_id = st.id AND es_hoa.score >= 8.00
-                    JOIN subjects s_hoa ON s_hoa.id = es_hoa.subject_id AND s_hoa.code = 'HOA_HOC'
-                    ORDER BY totalScore DESC, st.sbd ASC
+                    SELECT s.code AS subjectCode,
+                           COALESCE(SUM(CASE WHEN es.score >= 8.00 THEN 1 ELSE 0 END), 0) AS excellent,
+                           COALESCE(SUM(CASE WHEN es.score >= 6.00 AND es.score < 8.00 THEN 1 ELSE 0 END), 0) AS good,
+                           COALESCE(SUM(CASE WHEN es.score >= 4.00 AND es.score < 6.00 THEN 1 ELSE 0 END), 0) AS average,
+                           COALESCE(SUM(CASE WHEN es.score < 4.00 THEN 1 ELSE 0 END), 0) AS low
+                    FROM subjects s
+                    JOIN exam_scores es ON es.subject_id = s.id
+                    JOIN students st ON st.id = es.student_id
+                    WHERE st.province_code = :provinceCode
+                    GROUP BY s.code
+                    """,
+            nativeQuery = true)
+    List<SubjectDistributionProjection> aggregateScoreDistributionBySubjectAndProvince(
+            @Param("provinceCode") String provinceCode);
+
+    @Query(
+            value = """
+                    SELECT 
+                        s.sbd AS sbd,
+                        sbs.province_code AS provinceCode,
+                        p.name AS provinceName,
+                        sbs.total_score AS totalScore,
+                        m.score AS toan,
+                        v.score AS vatLi,
+                        c.score AS hoaHoc,
+                        s.language_code AS languageCode
+                    FROM student_block_scores sbs
+                    JOIN students s ON s.id = sbs.student_id
+                    JOIN provinces p ON p.code = sbs.province_code
+                    LEFT JOIN exam_scores m ON m.student_id = s.id AND m.subject_id = 1
+                    LEFT JOIN exam_scores v ON v.student_id = s.id AND v.subject_id = 4
+                    LEFT JOIN exam_scores c ON c.student_id = s.id AND c.subject_id = 5
+                    WHERE sbs.block_code = 'A00' 
+                      AND (:provinceCode IS NULL OR sbs.province_code = :provinceCode)
+                    ORDER BY sbs.total_score DESC, s.sbd ASC
                     LIMIT 10
                     """,
             nativeQuery = true)
-    List<GroupACandidateProjection> findTop10GroupACandidates();
+    List<GroupATop10BlockProjection> findTop10GroupAFromBlockScores(@Param("provinceCode") String provinceCode);
 
     interface SubjectDistributionProjection {
         String getSubjectCode();
@@ -58,10 +84,12 @@ public interface ExamScoreRepository extends JpaRepository<ExamScore, Long> {
         long getLow();
     }
 
-    interface GroupACandidateProjection {
+    interface GroupATop10BlockProjection {
         String getSbd();
 
-        String getLanguageCode();
+        String getProvinceCode();
+
+        String getProvinceName();
 
         BigDecimal getToan();
 
@@ -70,5 +98,7 @@ public interface ExamScoreRepository extends JpaRepository<ExamScore, Long> {
         BigDecimal getHoaHoc();
 
         BigDecimal getTotalScore();
+
+        String getLanguageCode();
     }
 }

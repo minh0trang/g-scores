@@ -1,5 +1,7 @@
 package com.example.backend.importer;
 
+import com.example.backend.province.ProvinceCache;
+import com.example.backend.student.BlockTotalCache;
 import com.example.backend.subject.Subject;
 import com.example.backend.subject.SubjectRepository;
 import java.io.BufferedReader;
@@ -39,6 +41,8 @@ public class CsvDataSeeder implements ApplicationRunner {
     private final CsvRowParser csvRowParser;
     private final SubjectRepository subjectRepository;
     private final JdbcTemplate jdbcTemplate;
+    private final BlockTotalCache blockTotalCache;
+    private final ProvinceCache provinceCache;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -53,6 +57,8 @@ public class CsvDataSeeder implements ApplicationRunner {
                     "Database already contains {} students. Checking block scores precomputation...",
                     existingStudents);
             ensureBlockScoresPrecomputed();
+            blockTotalCache.refresh();
+            provinceCache.refresh();
             return;
         }
 
@@ -154,6 +160,8 @@ public class CsvDataSeeder implements ApplicationRunner {
 
             synchronizeSequences();
             ensureBlockScoresPrecomputed();
+            blockTotalCache.refresh();
+            provinceCache.refresh();
 
             long durationMs = System.currentTimeMillis() - startTime;
             log.info(
