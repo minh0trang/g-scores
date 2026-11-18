@@ -34,11 +34,11 @@ public interface ExamScoreRepository extends JpaRepository<ExamScore, Long> {
                            es_hoa.score AS hoaHoc,
                            (es_toan.score + es_li.score + es_hoa.score) AS totalScore
                     FROM students st
-                    JOIN exam_scores es_toan ON es_toan.student_id = st.id
+                    JOIN exam_scores es_toan ON es_toan.student_id = st.id AND es_toan.score >= 8.00
                     JOIN subjects s_toan ON s_toan.id = es_toan.subject_id AND s_toan.code = 'TOAN'
-                    JOIN exam_scores es_li ON es_li.student_id = st.id
+                    JOIN exam_scores es_li ON es_li.student_id = st.id AND es_li.score >= 8.00
                     JOIN subjects s_li ON s_li.id = es_li.subject_id AND s_li.code = 'VAT_LI'
-                    JOIN exam_scores es_hoa ON es_hoa.student_id = st.id
+                    JOIN exam_scores es_hoa ON es_hoa.student_id = st.id AND es_hoa.score >= 8.00
                     JOIN subjects s_hoa ON s_hoa.id = es_hoa.subject_id AND s_hoa.code = 'HOA_HOC'
                     ORDER BY totalScore DESC, st.sbd ASC
                     LIMIT 10

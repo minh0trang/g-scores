@@ -24,22 +24,42 @@ public class ReportService {
     private final ExamScoreRepository examScoreRepository;
     private final SubjectRegistry subjectRegistry;
 
+    private volatile long cachedStudentCount = -1L;
+    private volatile OverviewReportResponse cachedOverview;
+    private volatile List<SubjectDistributionItem> cachedDistribution;
+    private volatile List<GroupACandidateItem> cachedTop10GroupA;
+
     @Transactional(readOnly = true)
     public OverviewReportResponse getOverviewStats() {
-        long totalStudents = studentRepository.count();
+        long currentStudentCount = studentRepository.count();
+        if (currentStudentCount > 0 && currentStudentCount == cachedStudentCount && cachedOverview != null) {
+            return cachedOverview;
+        }
+
         long totalScores = examScoreRepository.count();
         int totalSubjects = subjectRegistry.getAllSubjects().size();
 
-        List<GroupACandidateProjection> topCandidates = examScoreRepository.findTop10GroupACandidates();
+        List<GroupACandidateItem> topCandidates = getTop10GroupA();
         BigDecimal topGroupAScore = topCandidates.isEmpty()
                 ? BigDecimal.ZERO
-                : topCandidates.get(0).getTotalScore();
+                : topCandidates.get(0).totalScore();
 
-        return new OverviewReportResponse(totalStudents, totalScores, totalSubjects, topGroupAScore);
+        OverviewReportResponse response =
+                new OverviewReportResponse(currentStudentCount, totalScores, totalSubjects, topGroupAScore);
+
+        if (currentStudentCount > 0) {
+            this.cachedOverview = response;
+        }
+        return response;
     }
 
     @Transactional(readOnly = true)
     public List<SubjectDistributionItem> getScoreDistribution() {
+        long currentStudentCount = studentRepository.count();
+        if (currentStudentCount > 0 && currentStudentCount == cachedStudentCount && cachedDistribution != null) {
+            return cachedDistribution;
+        }
+
         Map<String, SubjectDistributionProjection> byCode = examScoreRepository
                 .aggregateScoreDistributionBySubject()
                 .stream()
@@ -60,11 +80,22 @@ public class ReportService {
                 result.add(new SubjectDistributionItem(subject.getCode(), subject.getName(), 0L, 0L, 0L, 0L));
             }
         }
-        return result;
+
+        List<SubjectDistributionItem> immutableResult = List.copyOf(result);
+        if (currentStudentCount > 0) {
+            this.cachedDistribution = immutableResult;
+            this.cachedStudentCount = currentStudentCount;
+        }
+        return immutableResult;
     }
 
     @Transactional(readOnly = true)
     public List<GroupACandidateItem> getTop10GroupA() {
+        long currentStudentCount = studentRepository.count();
+        if (currentStudentCount > 0 && currentStudentCount == cachedStudentCount && cachedTop10GroupA != null) {
+            return cachedTop10GroupA;
+        }
+
         List<GroupACandidateProjection> rows = examScoreRepository.findTop10GroupACandidates();
         List<GroupACandidateItem> result = new ArrayList<>(rows.size());
 
@@ -88,7 +119,11 @@ public class ReportService {
                     row.getLanguageCode()));
         }
 
-        return result;
+        List<GroupACandidateItem> immutableResult = List.copyOf(result);
+        if (currentStudentCount > 0) {
+            this.cachedTop10GroupA = immutableResult;
+            this.cachedStudentCount = currentStudentCount;
+        }
+        return immutableResult;
     }
 }
-

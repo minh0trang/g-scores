@@ -91,10 +91,10 @@ export function classifyScoreTier(score) {
 }
 
 export const SAMPLE_SBD_LIST = [
-  { sbd: '01000001', note: 'Thủ khoa Khối A (Toán, Lí, Hóa xuất sắc)' },
+  { sbd: '01000001', note: 'Thí sinh ban Khoa học Tự nhiên (Lí, Hóa, Sinh)' },
   { sbd: '01000002', note: 'Thí sinh ban Khoa học Xã hội (Sử, Địa, GDCD)' },
-  { sbd: '01000003', note: 'Thí sinh có đủ 4 mức điểm (Giỏi, Khá, TB, Yếu)' },
-  { sbd: '02001542', note: 'Thí sinh tự do (Chỉ thi 3 môn Khối A)' },
+  { sbd: '01000007', note: 'Thí sinh miễn / không thi môn Ngoại ngữ' },
+  { sbd: '01095066', note: 'Thí sinh điểm cao Khối A00 (29.15 điểm)' },
 ]
 
 export const MOCK_STUDENTS_BY_SBD = {

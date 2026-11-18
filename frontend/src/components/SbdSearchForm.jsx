@@ -1,24 +1,19 @@
 import {
   AlertCircle,
-  Hash,
   Loader2,
   RotateCcw,
   Search,
-  Sparkles,
   X,
 } from 'lucide-react'
-import { SAMPLE_SBD_LIST } from '../services/mockData'
 
 export default function SbdSearchForm({
   sbdInput,
   onSbdChange,
   onSubmit,
-  onSelectSample,
   onClear,
   loading,
   error,
   hasSearched,
-  activeSbd,
 }) {
   return (
     <section className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs">
@@ -26,7 +21,7 @@ export default function SbdSearchForm({
         Thông tin đăng ký dự thi
       </h2>
 
-      <form onSubmit={onSubmit} className="space-y-3" noValidate>
+      <form onSubmit={onSubmit} noValidate>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
           <label
             htmlFor="sbd-input"
@@ -36,9 +31,6 @@ export default function SbdSearchForm({
           </label>
 
           <div className="relative flex-1 max-w-sm">
-            <div className="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center text-[var(--text-muted)]">
-              <Hash className="h-4 w-4" strokeWidth={2} />
-            </div>
             <input
               id="sbd-input"
               type="text"
@@ -47,7 +39,7 @@ export default function SbdSearchForm({
               value={sbdInput}
               onChange={(e) => onSbdChange(e.target.value)}
               placeholder="Nhập Số báo danh (VD: 01000001)"
-              className="w-full pl-9 pr-9 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-sm font-medium text-[var(--text-primary)] placeholder:font-normal placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-shadow"
+              className="w-full pl-3.5 pr-9 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-sm font-medium text-[var(--text-primary)] placeholder:font-normal placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-shadow"
             />
             {sbdInput && (
               <button
@@ -92,35 +84,6 @@ export default function SbdSearchForm({
             )}
           </div>
         </div>
-
-        {/* Compact Sample SBD Row */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-[var(--border-default)]">
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-[var(--text-muted)] mr-1">
-            <Sparkles
-              className="h-3.5 w-3.5 text-[var(--accent-gold)]"
-              strokeWidth={2}
-            />
-            <span>SBD mẫu:</span>
-          </span>
-          {SAMPLE_SBD_LIST.map((sample) => {
-            const isSelected = activeSbd === sample.sbd
-            return (
-              <button
-                key={sample.sbd}
-                type="button"
-                onClick={() => onSelectSample(sample.sbd)}
-                title={sample.note}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs border transition-all cursor-pointer ${
-                  isSelected
-                    ? 'bg-blue-50 border-[var(--accent-primary)] text-[var(--accent-primary)] font-semibold'
-                    : 'bg-slate-50 border-[var(--border-default)] text-[var(--text-primary)] hover:bg-slate-100'
-                }`}
-              >
-                <span>{sample.sbd}</span>
-              </button>
-            )
-          })}
-        </div>
       </form>
 
       {error && (
@@ -138,4 +101,3 @@ export default function SbdSearchForm({
     </section>
   )
 }
-

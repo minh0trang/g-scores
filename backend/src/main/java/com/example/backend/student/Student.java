@@ -30,5 +30,8 @@ public class Student {
 
     @Column(name = "language_code", length = 10)
     private String languageCode;
+
+    @Column(name = "province_code", length = 2, nullable = false)
+    private String provinceCode;
 }
 

@@ -32,7 +32,6 @@ function getMockStudentBySbd(rawSbd) {
     return MOCK_STUDENTS_BY_SBD[normalized]
   }
 
-  // Hỗ trợ tra cứu cả các thí sinh nằm trong bảng Top 10 Khối A
   const topCandidate = MOCK_TOP_10_GROUP_A.find(
     (item) => item.sbd === normalized,
   )
@@ -80,15 +79,7 @@ export async function fetchStudentScoresBySbd(sbd) {
     return getMockStudentBySbd(normalized)
   }
 
-  try {
-    return await apiClient.get(`/students/${encodeURIComponent(normalized)}/scores`)
-  } catch (error) {
-    if (error.isNetworkError) {
-      await simulateDelay(150)
-      return getMockStudentBySbd(normalized)
-    }
-    throw error
-  }
+  return apiClient.get(`/students/${encodeURIComponent(normalized)}/scores`)
 }
 
 /**
@@ -100,14 +91,7 @@ export async function fetchOverviewStats() {
     return MOCK_OVERVIEW_STATS
   }
 
-  try {
-    return await apiClient.get('/reports/overview')
-  } catch (error) {
-    if (error.isNetworkError) {
-      return MOCK_OVERVIEW_STATS
-    }
-    throw error
-  }
+  return apiClient.get('/reports/overview')
 }
 
 /**
@@ -119,14 +103,7 @@ export async function fetchScoreDistribution() {
     return MOCK_SCORE_DISTRIBUTION
   }
 
-  try {
-    return await apiClient.get('/reports/score-distribution')
-  } catch (error) {
-    if (error.isNetworkError) {
-      return MOCK_SCORE_DISTRIBUTION
-    }
-    throw error
-  }
+  return apiClient.get('/reports/score-distribution')
 }
 
 /**
@@ -138,13 +115,5 @@ export async function fetchTop10GroupA() {
     return MOCK_TOP_10_GROUP_A
   }
 
-  try {
-    return await apiClient.get('/reports/group-a/top-10')
-  } catch (error) {
-    if (error.isNetworkError) {
-      return MOCK_TOP_10_GROUP_A
-    }
-    throw error
-  }
+  return apiClient.get('/reports/group-a/top-10')
 }
-

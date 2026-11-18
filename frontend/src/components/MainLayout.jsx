@@ -68,11 +68,6 @@ export default function MainLayout() {
               </div>
             </div>
           </div>
-
-          <div className="hidden sm:flex items-center gap-2 text-xs font-medium bg-white/10 border border-white/15 px-3 py-1.5 rounded-md text-blue-100">
-            <span className="h-2 w-2 rounded-full bg-[var(--state-success)]"></span>
-            <span>Dữ liệu: Kỳ thi THPT 2024 (~1 triệu thí sinh)</span>
-          </div>
         </div>
       </header>
 

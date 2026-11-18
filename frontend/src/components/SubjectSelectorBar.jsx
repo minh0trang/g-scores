@@ -21,13 +21,12 @@ export default function SubjectSelectorBar({
         <button
           type="button"
           onClick={() => onSelect('ALL')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
-            selectedCode === 'ALL'
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${selectedCode === 'ALL'
               ? 'bg-[var(--bg-brand)] text-white border-[var(--bg-brand)] shadow-2xs'
               : 'bg-slate-50 text-[var(--text-primary)] border-[var(--border-default)] hover:bg-slate-100'
-          }`}
+            }`}
         >
-          Tất cả 9 môn
+          Tất cả
         </button>
 
         {subjects.map((subj) => {
@@ -37,11 +36,10 @@ export default function SubjectSelectorBar({
               key={subj.subjectCode}
               type="button"
               onClick={() => onSelect(subj.subjectCode)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
-                isActive
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${isActive
                   ? 'bg-[var(--accent-primary)] text-white border-[var(--accent-primary)] shadow-2xs'
                   : 'bg-slate-50 text-[var(--text-primary)] border-[var(--border-default)] hover:bg-slate-100'
-              }`}
+                }`}
             >
               {subj.subjectName}
             </button>

@@ -5,24 +5,50 @@ import {
   fetchTop10GroupA,
 } from '../services/gscoresService'
 
+let cachedOverview = null
+let cachedDistribution = null
+let cachedTop10GroupA = null
+let inFlightPromise = null
+
 export function useReportData() {
-  const [overview, setOverview] = useState(null)
-  const [scoreDistribution, setScoreDistribution] = useState([])
-  const [top10GroupA, setTop10GroupA] = useState([])
-  const [loading, setLoading] = useState(true)
+  const hasCache = cachedDistribution !== null && cachedTop10GroupA !== null
+
+  const [overview, setOverview] = useState(cachedOverview)
+  const [scoreDistribution, setScoreDistribution] = useState(
+    cachedDistribution || [],
+  )
+  const [top10GroupA, setTop10GroupA] = useState(cachedTop10GroupA || [])
+  const [loading, setLoading] = useState(!hasCache)
   const [error, setError] = useState(null)
   const [reloadTick, setReloadTick] = useState(0)
 
   useEffect(() => {
+    if (
+      reloadTick === 0 &&
+      cachedDistribution !== null &&
+      cachedTop10GroupA !== null
+    ) {
+      return
+    }
+
     let isCancelled = false
 
     async function fetchAllReports() {
       try {
-        const [overviewData, distributionData, top10Data] = await Promise.all([
-          fetchOverviewStats(),
-          fetchScoreDistribution(),
-          fetchTop10GroupA(),
-        ])
+        if (!inFlightPromise || reloadTick > 0) {
+          inFlightPromise = Promise.all([
+            fetchOverviewStats(),
+            fetchScoreDistribution(),
+            fetchTop10GroupA(),
+          ])
+        }
+
+        const [overviewData, distributionData, top10Data] =
+          await inFlightPromise
+
+        cachedOverview = overviewData
+        cachedDistribution = distributionData
+        cachedTop10GroupA = top10Data
 
         if (!isCancelled) {
           setOverview(overviewData)
@@ -31,6 +57,7 @@ export function useReportData() {
           setError(null)
         }
       } catch (err) {
+        inFlightPromise = null
         if (!isCancelled) {
           setError(
             err?.message ||
@@ -52,6 +79,10 @@ export function useReportData() {
   }, [reloadTick])
 
   const refreshReports = useCallback(() => {
+    cachedOverview = null
+    cachedDistribution = null
+    cachedTop10GroupA = null
+    inFlightPromise = null
     setLoading(true)
     setError(null)
     setReloadTick((prev) => prev + 1)
