@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ExternalLink, Trophy } from 'lucide-react'
+import ProvinceSelector from './ProvinceSelector'
 import { classifyScoreTier, computeGroupARanking } from '../services/mockData'
 
 function getRankBadgeClass(rank) {
@@ -15,19 +16,34 @@ function getRankBadgeClass(rank) {
   return 'bg-slate-50 text-[var(--text-muted)] border-[var(--border-default)] font-medium'
 }
 
-export default function GroupALeaderboardTable({ topCandidates }) {
+export default function GroupALeaderboardTable({
+  topCandidates,
+  provinces,
+  selectedProvince,
+  onSelectProvince,
+}) {
   const { rankedCandidates } = computeGroupARanking(topCandidates)
 
   return (
     <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs">
-      <div className="flex items-center gap-2 mb-3">
-        <Trophy
-          className="h-5 w-5 text-[var(--accent-gold)]"
-          strokeWidth={2}
-        />
-        <h2 className="text-base font-semibold text-[var(--text-primary)]">
-          Bảng xếp hạng Top 10 thí sinh Khối A00 (Toán – Vật lí – Hóa học)
-        </h2>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2">
+          <Trophy
+            className="h-5 w-5 text-[var(--accent-gold)] shrink-0"
+            strokeWidth={2}
+          />
+          <h2 className="text-sm md:text-base font-semibold text-[var(--text-primary)]">
+            Bảng xếp hạng Top 10 thí sinh Khối A00 (Toán – Vật lí – Hóa học)
+          </h2>
+        </div>
+
+        {provinces && onSelectProvince && (
+          <ProvinceSelector
+            provinces={provinces}
+            selectedProvince={selectedProvince}
+            onSelectProvince={onSelectProvince}
+          />
+        )}
       </div>
 
       <div className="flex-1 min-h-0 overflow-auto rounded-lg border border-[var(--border-default)]">
