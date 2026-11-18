@@ -11,3 +11,4 @@ public record StudentBlockScoreResponse(
         Long provincialRank,
         Long provincialTotal) {
 }
+

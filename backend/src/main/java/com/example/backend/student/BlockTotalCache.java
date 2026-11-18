@@ -62,3 +62,4 @@ public class BlockTotalCache {
         return provincialTotals.getOrDefault(blockCode + ":" + provinceCode, 0L);
     }
 }
+

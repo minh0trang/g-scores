@@ -8,3 +8,4 @@ import org.springframework.stereotype.Repository;
 public interface ProvinceRepository extends JpaRepository<Province, String> {
     List<Province> findAllByOrderByCodeAsc();
 }
+

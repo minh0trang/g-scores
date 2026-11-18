@@ -26,3 +26,4 @@ public class Province {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 }
+

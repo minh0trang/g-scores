@@ -8,3 +8,4 @@ public interface StudentBlockRankProjection {
     Long getNationalRank();
     Long getProvincialRank();
 }
+

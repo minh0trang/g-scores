@@ -38,3 +38,4 @@ public class StudentBlockScore {
     @Column(name = "total_score", precision = 5, scale = 2, nullable = false)
     private BigDecimal totalScore;
 }
+

@@ -49,3 +49,4 @@ public interface StudentBlockScoreRepository extends JpaRepository<StudentBlockS
         Long getTotalCount();
     }
 }
+

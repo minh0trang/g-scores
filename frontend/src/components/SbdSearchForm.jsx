@@ -1,6 +1,7 @@
 import {
   AlertCircle,
   Loader2,
+  MapPin,
   RotateCcw,
   Search,
   X,
@@ -14,6 +15,7 @@ export default function SbdSearchForm({
   loading,
   error,
   hasSearched,
+  summary,
 }) {
   return (
     <section className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs">
@@ -85,6 +87,30 @@ export default function SbdSearchForm({
           </div>
         </div>
       </form>
+
+      {summary && (
+        <div className="mt-3.5 pt-3 border-t border-[var(--border-default)] flex flex-wrap items-center gap-2.5 text-xs sm:text-sm">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-[var(--accent-primary)] font-semibold border border-blue-200">
+            <span>SBD:</span>
+            <span>{summary.sbd}</span>
+          </div>
+
+          {summary.provinceName && (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-[var(--text-primary)] font-medium border border-slate-200">
+              <MapPin className="h-3.5 w-3.5 text-[var(--accent-primary)] shrink-0" strokeWidth={2} />
+              <span className="text-[var(--text-muted)]">Tỉnh/Thành phố:</span>
+              <span className="font-semibold">{summary.provinceCode} - {summary.provinceName}</span>
+            </div>
+          )}
+
+          {summary.languageLabel && (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+              <span className="text-emerald-700">Ngoại ngữ:</span>
+              <span>{summary.languageLabel}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {error && (
         <div

@@ -1,63 +1,83 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
   fetchOverviewStats,
+  fetchProvinces,
   fetchScoreDistribution,
   fetchTop10GroupA,
 } from '../services/gscoresService'
 
-let cachedOverview = null
-let cachedDistribution = null
-let cachedTop10GroupA = null
-let inFlightPromise = null
+let cachedProvincesList = null
+const reportCache = new Map()
+const inFlightRequests = new Map()
 
-export function useReportData() {
-  const hasCache = cachedDistribution !== null && cachedTop10GroupA !== null
+export function useReportData(initialProvince = '') {
+  const [selectedProvince, setSelectedProvince] = useState(initialProvince)
+  const [provinces, setProvinces] = useState(cachedProvincesList || [])
 
-  const [overview, setOverview] = useState(cachedOverview)
-  const [scoreDistribution, setScoreDistribution] = useState(
-    cachedDistribution || [],
-  )
-  const [top10GroupA, setTop10GroupA] = useState(cachedTop10GroupA || [])
-  const [loading, setLoading] = useState(!hasCache)
+  const currentKey = selectedProvince || 'ALL'
+  const cachedData = reportCache.get(currentKey)
+
+  const [loading, setLoading] = useState(!cachedData)
   const [error, setError] = useState(null)
   const [reloadTick, setReloadTick] = useState(0)
+  const [fetchedData, setFetchedData] = useState(null)
+
+  const activeData = cachedData || fetchedData
+  const overview = activeData?.overview || null
+  const scoreDistribution = activeData?.scoreDistribution || []
+  const top10GroupA = activeData?.top10GroupA || []
 
   useEffect(() => {
-    if (
-      reloadTick === 0 &&
-      cachedDistribution !== null &&
-      cachedTop10GroupA !== null
-    ) {
+    let isCancelled = false
+    const key = selectedProvince || 'ALL'
+
+    // Load provinces once if not yet cached
+    if (!cachedProvincesList) {
+      fetchProvinces()
+        .then((data) => {
+          cachedProvincesList = data
+          if (!isCancelled) {
+            setProvinces(data)
+          }
+        })
+        .catch((err) => {
+          console.warn('Failed to load provinces list:', err)
+        })
+    }
+
+    if (reloadTick === 0 && reportCache.has(key)) {
       return
     }
 
-    let isCancelled = false
-
-    async function fetchAllReports() {
+    async function loadDataForProvince() {
       try {
-        if (!inFlightPromise || reloadTick > 0) {
-          inFlightPromise = Promise.all([
-            fetchOverviewStats(),
-            fetchScoreDistribution(),
-            fetchTop10GroupA(),
+        let requestPromise = inFlightRequests.get(key)
+        if (!requestPromise || reloadTick > 0) {
+          requestPromise = Promise.all([
+            fetchOverviewStats(selectedProvince || undefined),
+            fetchScoreDistribution(selectedProvince || undefined),
+            fetchTop10GroupA(selectedProvince || undefined),
           ])
+          inFlightRequests.set(key, requestPromise)
         }
 
         const [overviewData, distributionData, top10Data] =
-          await inFlightPromise
+          await requestPromise
 
-        cachedOverview = overviewData
-        cachedDistribution = distributionData
-        cachedTop10GroupA = top10Data
+        const result = {
+          overview: overviewData,
+          scoreDistribution: distributionData,
+          top10GroupA: top10Data,
+        }
+        reportCache.set(key, result)
+        inFlightRequests.delete(key)
 
         if (!isCancelled) {
-          setOverview(overviewData)
-          setScoreDistribution(distributionData)
-          setTop10GroupA(top10Data)
+          setFetchedData(result)
           setError(null)
         }
       } catch (err) {
-        inFlightPromise = null
+        inFlightRequests.delete(key)
         if (!isCancelled) {
           setError(
             err?.message ||
@@ -71,27 +91,40 @@ export function useReportData() {
       }
     }
 
-    fetchAllReports()
+    loadDataForProvince()
 
     return () => {
       isCancelled = true
     }
-  }, [reloadTick])
+  }, [selectedProvince, reloadTick])
+
+  const handleSelectProvince = useCallback((provinceCode) => {
+    const key = provinceCode || 'ALL'
+    setSelectedProvince(provinceCode)
+    setError(null)
+    if (!reportCache.has(key)) {
+      setLoading(true)
+    } else {
+      setLoading(false)
+    }
+  }, [])
 
   const refreshReports = useCallback(() => {
-    cachedOverview = null
-    cachedDistribution = null
-    cachedTop10GroupA = null
-    inFlightPromise = null
+    const key = selectedProvince || 'ALL'
+    reportCache.delete(key)
+    inFlightRequests.delete(key)
     setLoading(true)
     setError(null)
     setReloadTick((prev) => prev + 1)
-  }, [])
+  }, [selectedProvince])
 
   return {
     overview,
     scoreDistribution,
     top10GroupA,
+    provinces,
+    selectedProvince,
+    setSelectedProvince: handleSelectProvince,
     loading,
     error,
     refreshReports,

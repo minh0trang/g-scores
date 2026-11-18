@@ -1,3 +1,69 @@
+export const MOCK_PROVINCES = [
+  { code: '01', name: 'Hà Nội' },
+  { code: '02', name: 'Hà Giang' },
+  { code: '03', name: 'Cao Bằng' },
+  { code: '04', name: 'Bắc Kạn' },
+  { code: '05', name: 'Tuyên Quang' },
+  { code: '06', name: 'Lào Cai' },
+  { code: '07', name: 'Điện Biên' },
+  { code: '08', name: 'Lai Châu' },
+  { code: '09', name: 'Sơn La' },
+  { code: '10', name: 'Yên Bái' },
+  { code: '11', name: 'Hòa Bình' },
+  { code: '12', name: 'Thái Nguyên' },
+  { code: '13', name: 'Lạng Sơn' },
+  { code: '14', name: 'Quảng Ninh' },
+  { code: '15', name: 'Bắc Giang' },
+  { code: '16', name: 'Phú Thọ' },
+  { code: '17', name: 'Vĩnh Phúc' },
+  { code: '18', name: 'Bắc Ninh' },
+  { code: '19', name: 'Hải Dương' },
+  { code: '21', name: 'Hải Phòng' },
+  { code: '22', name: 'Hưng Yên' },
+  { code: '23', name: 'Thái Bình' },
+  { code: '24', name: 'Hà Nam' },
+  { code: '25', name: 'Nam Định' },
+  { code: '26', name: 'Ninh Bình' },
+  { code: '27', name: 'Thanh Hóa' },
+  { code: '28', name: 'Nghệ An' },
+  { code: '29', name: 'Hà Tĩnh' },
+  { code: '30', name: 'Quảng Bình' },
+  { code: '31', name: 'Quảng Trị' },
+  { code: '32', name: 'Thừa Thiên Huế' },
+  { code: '33', name: 'Đà Nẵng' },
+  { code: '34', name: 'Quảng Nam' },
+  { code: '35', name: 'Quảng Ngãi' },
+  { code: '36', name: 'Bình Định' },
+  { code: '37', name: 'Phú Yên' },
+  { code: '38', name: 'Khánh Hòa' },
+  { code: '39', name: 'Ninh Thuận' },
+  { code: '40', name: 'Bình Thuận' },
+  { code: '41', name: 'Kon Tum' },
+  { code: '42', name: 'Gia Lai' },
+  { code: '43', name: 'Đắk Lắk' },
+  { code: '44', name: 'Đắk Nông' },
+  { code: '45', name: 'Lâm Đồng' },
+  { code: '46', name: 'Bình Phước' },
+  { code: '47', name: 'Tây Ninh' },
+  { code: '48', name: 'Bình Dương' },
+  { code: '49', name: 'Đồng Nai' },
+  { code: '50', name: 'Bà Rịa - Vũng Tàu' },
+  { code: '51', name: 'TP. Hồ Chí Minh' },
+  { code: '52', name: 'Long An' },
+  { code: '53', name: 'Tiền Giang' },
+  { code: '54', name: 'Bến Tre' },
+  { code: '55', name: 'Trà Vinh' },
+  { code: '56', name: 'Vĩnh Long' },
+  { code: '57', name: 'Đồng Tháp' },
+  { code: '58', name: 'An Giang' },
+  { code: '59', name: 'Kiên Giang' },
+  { code: '60', name: 'Cần Thơ' },
+  { code: '61', name: 'Hậu Giang' },
+  { code: '62', name: 'Sóc Trăng' },
+  { code: '63', name: 'Bạc Liêu' },
+  { code: '64', name: 'Cà Mau' },
+]
+
 export const SUBJECTS = [
   { code: 'TOAN', name: 'Toán', category: 'Bắt buộc' },
   { code: 'NGU_VAN', name: 'Ngữ văn', category: 'Bắt buộc' },
@@ -340,9 +406,12 @@ export function computeGroupARanking(candidates = []) {
     scoreGroupsMap.get(scoreKey).push(candidate)
   })
 
+  let cumulativeCount = 0
   const scoreGroups = Array.from(scoreGroupsMap.entries()).map(
-    ([scoreKey, groupCandidates], groupIndex) => {
-      const rank = groupIndex + 1
+    ([scoreKey, groupCandidates]) => {
+      // Use candidate's competition rank from API if available, else cumulative rank
+      const rank = groupCandidates[0]?.rank ?? (cumulativeCount + 1)
+      cumulativeCount += groupCandidates.length
       const isTied = groupCandidates.length > 1
 
       let roleLabel = `Hạng ${rank}`
@@ -372,17 +441,10 @@ export function computeGroupARanking(candidates = []) {
     },
   )
 
-  const rankedCandidates = []
-  scoreGroups.forEach((group) => {
-    group.candidates.forEach((candidate) => {
-      rankedCandidates.push({
-        ...candidate,
-        rank: group.rank,
-        isTied: group.isTied,
-        roleLabel: group.roleLabel,
-      })
-    })
-  })
+  const rankedCandidates = candidates.map((candidate, idx) => ({
+    ...candidate,
+    rank: candidate.rank ?? idx + 1,
+  }))
 
   return {
     rankedCandidates,

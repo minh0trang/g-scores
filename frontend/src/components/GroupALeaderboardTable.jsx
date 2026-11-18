@@ -34,12 +34,13 @@ export default function GroupALeaderboardTable({ topCandidates }) {
         <table className="w-full text-center border-collapse text-sm">
           <thead>
             <tr className="bg-slate-50 border-b border-[var(--border-default)] text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-              <th className="py-2.5 px-4 w-24 text-center">Hạng</th>
-              <th className="py-2.5 px-4 text-center">Số báo danh</th>
-              <th className="py-2.5 px-4 text-center">Toán</th>
-              <th className="py-2.5 px-4 text-center">Vật lí</th>
-              <th className="py-2.5 px-4 text-center">Hóa học</th>
-              <th className="py-2.5 px-4 text-center">Tổng điểm Khối A</th>
+              <th className="py-2.5 px-3 w-20 text-center">Hạng</th>
+              <th className="py-2.5 px-3 text-center">Số báo danh</th>
+              <th className="py-2.5 px-3 text-center">Địa phương</th>
+              <th className="py-2.5 px-3 text-center">Toán</th>
+              <th className="py-2.5 px-3 text-center">Vật lí</th>
+              <th className="py-2.5 px-3 text-center">Hóa học</th>
+              <th className="py-2.5 px-3 text-center">Tổng điểm Khối A</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-default)]">
@@ -54,7 +55,7 @@ export default function GroupALeaderboardTable({ topCandidates }) {
                   key={item.sbd}
                   className="hover:bg-slate-50/80 transition-colors"
                 >
-                  <td className="py-2 px-4 text-center">
+                  <td className="py-2 px-3 text-center">
                     <span
                       className={`inline-flex items-center justify-center h-6 w-7 rounded-md text-xs border ${getRankBadgeClass(
                         item.rank,
@@ -64,7 +65,7 @@ export default function GroupALeaderboardTable({ topCandidates }) {
                     </span>
                   </td>
 
-                  <td className="py-2 px-4 text-center font-semibold">
+                  <td className="py-2 px-3 text-center font-semibold">
                     <Link
                       to={`/search?sbd=${item.sbd}`}
                       className="inline-flex items-center justify-center gap-1.5 text-[var(--accent-primary)] hover:underline"
@@ -77,7 +78,11 @@ export default function GroupALeaderboardTable({ topCandidates }) {
                     </Link>
                   </td>
 
-                  <td className="py-2 px-4 text-center">
+                  <td className="py-2 px-3 text-center text-xs font-medium text-[var(--text-primary)]">
+                    {item.provinceName || '—'}
+                  </td>
+
+                  <td className="py-2 px-3 text-center">
                     <span
                       className="font-bold"
                       style={{ color: toanTier.colorVar }}
@@ -86,7 +91,7 @@ export default function GroupALeaderboardTable({ topCandidates }) {
                     </span>
                   </td>
 
-                  <td className="py-2 px-4 text-center">
+                  <td className="py-2 px-3 text-center">
                     <span
                       className="font-bold"
                       style={{ color: vatLiTier.colorVar }}
@@ -95,7 +100,7 @@ export default function GroupALeaderboardTable({ topCandidates }) {
                     </span>
                   </td>
 
-                  <td className="py-2 px-4 text-center">
+                  <td className="py-2 px-3 text-center">
                     <span
                       className="font-bold"
                       style={{ color: hoaHocTier.colorVar }}
@@ -104,7 +109,7 @@ export default function GroupALeaderboardTable({ topCandidates }) {
                     </span>
                   </td>
 
-                  <td className="py-2 px-4 text-center">
+                  <td className="py-2 px-3 text-center">
                     <span
                       className="text-base font-bold"
                       style={{ color: totalTier.colorVar }}

@@ -6,7 +6,14 @@ import SubjectTierSummary from '../components/SubjectTierSummary'
 import { useReportData } from '../hooks/useReportData'
 
 export default function Dashboard() {
-  const { scoreDistribution, loading, error } = useReportData()
+  const {
+    scoreDistribution,
+    provinces,
+    selectedProvince,
+    setSelectedProvince,
+    loading,
+    error,
+  } = useReportData()
   const [selectedSubjectCode, setSelectedSubjectCode] = useState('ALL')
 
   const selectedSubjectData = useMemo(() => {
@@ -69,6 +76,9 @@ export default function Dashboard() {
         subjects={scoreDistribution}
         selectedCode={selectedSubjectCode}
         onSelect={setSelectedSubjectCode}
+        provinces={provinces}
+        selectedProvince={selectedProvince}
+        onSelectProvince={setSelectedProvince}
       />
 
       <SubjectTierSummary stats={aggregatedStats} />

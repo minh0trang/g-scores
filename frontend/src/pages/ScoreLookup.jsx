@@ -46,6 +46,7 @@ export default function ScoreLookup() {
         loading={loading}
         error={error}
         hasSearched={hasSearched}
+        summary={summary}
       />
 
       <section className="flex-1 flex flex-col min-h-0 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 md:p-5 shadow-2xs">
@@ -89,7 +90,10 @@ export default function ScoreLookup() {
               subjectScores={subjectScores}
               summary={summary}
             />
-            <BlockScoreTable blockScores={blockScores} />
+            <BlockScoreTable
+              blockScores={blockScores}
+              provinceName={summary?.provinceName}
+            />
           </div>
         )}
       </section>

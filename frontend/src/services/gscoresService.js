@@ -1,6 +1,7 @@
 import apiClient from './apiClient'
 import {
   MOCK_OVERVIEW_STATS,
+  MOCK_PROVINCES,
   MOCK_SCORE_DISTRIBUTION,
   MOCK_STUDENTS_BY_SBD,
   MOCK_TOP_10_GROUP_A,
@@ -38,7 +39,10 @@ function getMockStudentBySbd(rawSbd) {
   if (topCandidate) {
     return {
       sbd: topCandidate.sbd,
+      provinceCode: topCandidate.provinceCode || '01',
+      provinceName: topCandidate.provinceName || 'Hà Nội',
       languageCode: topCandidate.languageCode,
+      languageDisplayName: topCandidate.languageCode ? 'Ngoại ngữ (N1 - Tiếng Anh)' : null,
       scores: {
         TOAN: topCandidate.toan,
         NGU_VAN: 7.75,
@@ -50,6 +54,17 @@ function getMockStudentBySbd(rawSbd) {
         DIA_LI: null,
         GDCD: null,
       },
+      blocks: [
+        {
+          blockCode: 'A00',
+          blockName: 'Toán, Vật lí, Hóa học',
+          totalScore: topCandidate.totalScore,
+          nationalRank: topCandidate.rank,
+          nationalTotal: 343800,
+          provincialRank: 1,
+          provincialTotal: 29149,
+        },
+      ],
     }
   }
 
@@ -58,6 +73,18 @@ function getMockStudentBySbd(rawSbd) {
   )
   notFoundError.status = 404
   throw notFoundError
+}
+
+/**
+ * GET /api/v1/provinces
+ */
+export async function fetchProvinces() {
+  if (USE_MOCK_BY_DEFAULT) {
+    await simulateDelay(150)
+    return MOCK_PROVINCES
+  }
+
+  return apiClient.get('/provinces')
 }
 
 /**
@@ -83,37 +110,40 @@ export async function fetchStudentScoresBySbd(sbd) {
 }
 
 /**
- * GET /api/v1/reports/overview
+ * GET /api/v1/reports/overview(?province=<code>)
  */
-export async function fetchOverviewStats() {
+export async function fetchOverviewStats(province) {
   if (USE_MOCK_BY_DEFAULT) {
     await simulateDelay(200)
     return MOCK_OVERVIEW_STATS
   }
 
-  return apiClient.get('/reports/overview')
+  const params = province ? { province } : {}
+  return apiClient.get('/reports/overview', { params })
 }
 
 /**
- * GET /api/v1/reports/score-distribution
+ * GET /api/v1/reports/score-distribution(?province=<code>)
  */
-export async function fetchScoreDistribution() {
+export async function fetchScoreDistribution(province) {
   if (USE_MOCK_BY_DEFAULT) {
     await simulateDelay(250)
     return MOCK_SCORE_DISTRIBUTION
   }
 
-  return apiClient.get('/reports/score-distribution')
+  const params = province ? { province } : {}
+  return apiClient.get('/reports/score-distribution', { params })
 }
 
 /**
- * GET /api/v1/reports/group-a/top-10
+ * GET /api/v1/reports/group-a/top-10(?province=<code>)
  */
-export async function fetchTop10GroupA() {
+export async function fetchTop10GroupA(province) {
   if (USE_MOCK_BY_DEFAULT) {
     await simulateDelay(250)
     return MOCK_TOP_10_GROUP_A
   }
 
-  return apiClient.get('/reports/group-a/top-10')
+  const params = province ? { province } : {}
+  return apiClient.get('/reports/group-a/top-10', { params })
 }

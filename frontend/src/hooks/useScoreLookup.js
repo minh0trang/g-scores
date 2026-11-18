@@ -10,60 +10,6 @@ import {
   formatSubjectDisplayName,
 } from '../services/mockData'
 
-const D_BLOCK_BY_LANGUAGE = {
-  N1: { code: 'D01', languageName: 'Tiếng Anh' },
-  N2: { code: 'D02', languageName: 'Tiếng Nga' },
-  N3: { code: 'D03', languageName: 'Tiếng Pháp' },
-  N4: { code: 'D04', languageName: 'Tiếng Trung' },
-  N5: { code: 'D05', languageName: 'Tiếng Đức' },
-  N6: { code: 'D06', languageName: 'Tiếng Nhật' },
-  N7: { code: 'D07', languageName: 'Tiếng Hàn' },
-}
-
-function buildExamBlocksForStudent(languageCode) {
-  const blocks = [
-    {
-      code: 'A00',
-      subjects: ['TOAN', 'VAT_LI', 'HOA_HOC'],
-      subjectLabel: 'Toán + Vật lí + Hóa học',
-    },
-  ]
-
-  // Khối A01 bắt buộc môn Ngoại ngữ phải là Tiếng Anh (N1)
-  if (languageCode === 'N1') {
-    blocks.push({
-      code: 'A01',
-      subjects: ['TOAN', 'VAT_LI', 'NGOAI_NGU'],
-      subjectLabel: 'Toán + Vật lí + Tiếng Anh',
-    })
-  }
-
-  blocks.push(
-    {
-      code: 'B00',
-      subjects: ['TOAN', 'HOA_HOC', 'SINH_HOC'],
-      subjectLabel: 'Toán + Hóa học + Sinh học',
-    },
-    {
-      code: 'C00',
-      subjects: ['NGU_VAN', 'LICH_SU', 'DIA_LI'],
-      subjectLabel: 'Ngữ văn + Lịch sử + Địa lí',
-    },
-  )
-
-  // Khối D01..D07 tương ứng đúng mã Ngoại ngữ N1..N7 của thí sinh
-  const dBlockMeta = D_BLOCK_BY_LANGUAGE[languageCode]
-  if (dBlockMeta) {
-    blocks.push({
-      code: dBlockMeta.code,
-      subjects: ['TOAN', 'NGU_VAN', 'NGOAI_NGU'],
-      subjectLabel: `Toán + Ngữ văn + ${dBlockMeta.languageName}`,
-    })
-  }
-
-  return blocks
-}
-
 export function useScoreLookup(initialSbd = '') {
   const normalizedInitial = String(initialSbd ?? '').trim()
   const hasInitialValidSbd = isValidSbdFormat(normalizedInitial)
@@ -156,7 +102,7 @@ export function useScoreLookup(initialSbd = '') {
     setHasSearched(false)
   }, [])
 
-  // Hiển thị các môn có điểm dự thi + môn Ngoại ngữ (nếu không có language_code thì hiển thị 'Ngoại ngữ' và điểm '—')
+  // Hiển thị các môn có điểm dự thi + môn Ngoại ngữ
   const subjectScores = useMemo(() => {
     if (!studentData) return []
 
@@ -182,35 +128,26 @@ export function useScoreLookup(initialSbd = '') {
     })
   }, [studentData])
 
-  // Tính tổng điểm theo các khối xét tuyển đúng với mã ngoại ngữ của thí sinh
+  // Single Source of Truth: Dùng trực tiếp mảng blocks[] trả về từ Backend API
   const blockScores = useMemo(() => {
-    if (!studentData) return []
+    if (!studentData || !Array.isArray(studentData.blocks)) return []
 
-    const rawScores = studentData.scores || {}
-    const candidateBlocks = buildExamBlocksForStudent(studentData.languageCode)
+    return studentData.blocks.map((b) => {
+      const numTotal = Number(b.totalScore)
+      const tier = classifyScoreTier(numTotal / 3)
 
-    return candidateBlocks
-      .filter((block) =>
-        block.subjects.every(
-          (code) =>
-            rawScores[code] !== null &&
-            rawScores[code] !== undefined &&
-            rawScores[code] !== '',
-        ),
-      )
-      .map((block) => {
-        const total = block.subjects.reduce(
-          (sum, code) => sum + Number(rawScores[code]),
-          0,
-        )
-        const tier = classifyScoreTier(total / 3)
-
-        return {
-          ...block,
-          totalScore: total.toFixed(2),
-          tier,
-        }
-      })
+      return {
+        code: b.blockCode,
+        name: b.blockName,
+        subjectLabel: b.blockName,
+        totalScore: numTotal.toFixed(2),
+        nationalRank: b.nationalRank,
+        nationalTotal: b.nationalTotal,
+        provincialRank: b.provincialRank,
+        provincialTotal: b.provincialTotal,
+        tier,
+      }
+    })
   }, [studentData])
 
   const summary = useMemo(() => {
@@ -226,13 +163,17 @@ export function useScoreLookup(initialSbd = '') {
           ).toFixed(2)
         : '—'
 
-    const languageLabel = studentData.languageCode
-      ? LANGUAGE_CODE_LABELS[studentData.languageCode] ||
-        studentData.languageCode
-      : null
+    const languageLabel =
+      studentData.languageDisplayName ||
+      (studentData.languageCode
+        ? LANGUAGE_CODE_LABELS[studentData.languageCode] ||
+          studentData.languageCode
+        : null)
 
     return {
       sbd: studentData.sbd,
+      provinceCode: studentData.provinceCode,
+      provinceName: studentData.provinceName,
       languageCode: studentData.languageCode || null,
       languageLabel,
       totalTaken,
