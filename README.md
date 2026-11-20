@@ -97,7 +97,8 @@ g-scores/
 │   ├── nginx.conf                  # Production SPA routing + /api/ reverse proxy
 │   ├── vercel.json                 # Vercel SPA fallback rewrite (/(.*) -> /index.html)
 │   └── Dockerfile                  # Node 20 Alpine build -> Nginx 1.27 Alpine runtime
-├── dataset/                        # Place diem_thi_thpt_2024.csv here (gitignored)
+├── dataset/
+│   └── diem_thi_thpt_2024.csv      # 2024 exam dataset (1,061,605 rows, ~42.1 MB)
 ├── imgs/                           # Application screenshots & architecture.svg
 ├── docker-compose.yml              # PostgreSQL 16 + Spring Boot Backend + Nginx Frontend
 └── README.md
@@ -168,7 +169,7 @@ Measured on the local **PostgreSQL 16** dataset (`1,061,605` students, `6,037,43
 ## Running Locally
 
 ### Docker Compose (Recommended)
-Prerequisites: Docker Desktop v20.10+, Docker Compose v2+, and `dataset/diem_thi_thpt_2024.csv`.
+Prerequisites: Docker Desktop v20.10+ and Docker Compose v2+. The dataset `dataset/diem_thi_thpt_2024.csv` is bundled directly in the repository for one-command startup:
 
 ```bash
 git clone https://github.com/minh0trang/g-scores.git
@@ -177,7 +178,7 @@ docker compose up --build
 ```
 
 1. `postgres` starts PostgreSQL 16 and passes `pg_isready`.
-2. `backend` runs Flyway `V1`–`V7`, imports & verifies `diem_thi_thpt_2024.csv`, precomputes `student_block_scores`, refreshes caches, and reports `200 UP` on `/actuator/health/readiness` (`start_period: 900s`).
+2. `backend` runs Flyway `V1`–`V7`, imports & verifies `diem_thi_thpt_2024.csv`, precomputes `student_block_scores`, refreshes caches, and reports `200 UP` on `/actuator/health/readiness` (`start_period: 900s`). The initial clean seed of 1.06M rows takes several minutes depending on hardware (subsequent restarts verify `import_metadata` in a few seconds without re-importing).
 3. `frontend` waits for backend readiness and serves Nginx on `http://localhost` (proxying `/api/` internally to `backend:8080`).
 
 ### Manual Local Development
