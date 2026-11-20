@@ -18,15 +18,19 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Install wget for Docker healthcheck
-RUN apk add --no-cache wget
+# Install wget for Docker healthcheck and create non-root runtime user
+RUN apk add --no-cache wget \
+    && addgroup -S appgroup \
+    && adduser -S appuser -G appgroup
 
 # Copy executable jar from builder stage
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder --chown=appuser:appgroup /app/target/*.jar app.jar
+
+USER appuser
 
 EXPOSE 8080
 
 ENV JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75.0"
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar app.jar"]
 

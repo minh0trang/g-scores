@@ -92,13 +92,14 @@ g-scores/
 └── README.md
 ```
 
-### Database Schema Evolution (Flyway `V1`–`V6`)
+### Database Schema Evolution (Flyway `V1`–`V7`)
 1. **`V1__init_schema.sql`**: Normalized schema (`students`, `subjects`, `exam_scores`) with `NUMERIC(4,2)` scores, `CHECK (score >= 0.00 AND score <= 10.00)`, unique constraints, and lookup indexes. Untaken subjects are omitted (**sparse storage**).
 2. **`V2__seed_subjects.sql`**: Seeds the 9 official subjects (`TOAN`, `NGU_VAN`, `NGOAI_NGU`, `VAT_LI`, `HOA_HOC`, `SINH_HOC`, `LICH_SU`, `DIA_LI`, `GDCD`).
 3. **`V3__add_provinces.sql`**: Creates `provinces`, adds `students.province_code` (2-digit SBD prefix) with FK and index.
 4. **`V4__create_student_block_scores.sql`**: Creates `student_block_scores` (`A00`, `A01`, `B00`, `C00`, `D01`–`D07`) with `total_score NUMERIC(5,2)` and composite ranking indexes (`idx_block_score_nat`, `idx_block_score_prov`).
 5. **`V5__fix_province_names.sql`**: Idempotently normalizes all **63 MOET Exam Council province names** (Công văn `1277/BGDĐT-QLCL`; code `20` unused; preserves 2-digit codes and FKs).
 6. **`V6__create_import_metadata.sql`**: Creates `import_metadata` to track dataset completeness (`IN_PROGRESS`, `COMPLETED`, `FAILED`, `UNVERIFIED_LEGACY`) without hardcoding expected candidate counts.
+7. **`V7__drop_redundant_indexes.sql`**: Drops redundant single-column indexes (`idx_exam_scores_student_id`, `idx_block_score_student_id`) already covered by composite `UNIQUE` constraints (`uq_exam_scores_student_subject`, `uq_student_block`), saving ~`107 MB` without affecting query plans.
 
 ---
 
@@ -146,7 +147,7 @@ cd g-scores
 docker compose up --build
 ```
 1. `postgres` starts PostgreSQL 16 and passes `pg_isready`.
-2. `backend` runs Flyway `V1`–`V6`, imports & verifies `dataset/diem_thi_thpt_2024.csv`, precomputes `student_block_scores`, warms caches, and exposes `200 UP` on `/actuator/health/readiness`.
+2. `backend` runs Flyway `V1`–`V7`, imports & verifies `dataset/diem_thi_thpt_2024.csv`, precomputes `student_block_scores`, warms caches, and exposes `200 UP` on `/actuator/health/readiness`.
 3. `frontend` waits for backend readiness and serves the Nginx SPA on `http://localhost` (proxying `/api/` internally to `backend:8080`).
 
 ### Manual Local Development Setup
