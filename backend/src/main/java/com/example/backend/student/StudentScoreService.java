@@ -2,6 +2,8 @@ package com.example.backend.student;
 
 import com.example.backend.common.BadRequestException;
 import com.example.backend.common.ResourceNotFoundException;
+import com.example.backend.common.ServiceUnavailableException;
+import com.example.backend.importer.DataSeedState;
 import com.example.backend.province.ProvinceCache;
 import com.example.backend.score.ExamScore;
 import com.example.backend.score.ExamScoreRepository;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,26 @@ public class StudentScoreService {
     private final BlockTotalCache blockTotalCache;
     private final ProvinceCache provinceCache;
     private final SubjectRegistry subjectRegistry;
+    private final DataSeedState dataSeedState;
+
+    private DataSeedState.Snapshot requireDataReady() {
+        DataSeedState.Snapshot snap = dataSeedState.snapshot();
+        if (!snap.isDataReady()) {
+            throw new ServiceUnavailableException(
+                    "Dữ liệu điểm thi đang được khởi tạo hoặc chưa sẵn sàng ("
+                            + snap.state().name()
+                            + "). Vui lòng thử lại sau.");
+        }
+        return snap;
+    }
+
+    private void verifySnapshotStillCurrent(DataSeedState.Snapshot before) {
+        DataSeedState.Snapshot after = dataSeedState.snapshot();
+        if (!after.isDataReady() || after.epoch() != before.epoch()) {
+            throw new ServiceUnavailableException(
+                    "Dữ liệu điểm thi vừa được cập nhật trong lúc xử lý yêu cầu. Vui lòng thử lại.");
+        }
+    }
 
     @Transactional(readOnly = true)
     public StudentScoreResponse getScoresBySbd(String rawSbd) {
@@ -53,10 +76,15 @@ public class StudentScoreService {
                     "Số báo danh không hợp lệ. Vui lòng nhập đúng 8 chữ số (ví dụ: 01000001).");
         }
 
-        Student student = studentRepository
-                .findBySbd(normalizedSbd)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Không tìm thấy dữ liệu điểm thi cho Số báo danh \"" + normalizedSbd + "\"."));
+        DataSeedState.Snapshot before = requireDataReady();
+
+        Optional<Student> studentOpt = studentRepository.findBySbd(normalizedSbd);
+        if (studentOpt.isEmpty()) {
+            verifySnapshotStillCurrent(before);
+            throw new ResourceNotFoundException(
+                    "Không tìm thấy dữ liệu điểm thi cho Số báo danh \"" + normalizedSbd + "\".");
+        }
+        Student student = studentOpt.get();
 
         List<ExamScore> takenScores = examScoreRepository.findByStudentIdWithSubject(student.getId());
 
@@ -94,6 +122,8 @@ public class StudentScoreService {
         }
 
         String provinceName = provinceCache.getProvinceName(student.getProvinceCode());
+
+        verifySnapshotStillCurrent(before);
 
         return new StudentScoreResponse(
                 student.getSbd(),
